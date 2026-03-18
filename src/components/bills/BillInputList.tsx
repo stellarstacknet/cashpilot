@@ -33,9 +33,9 @@ export function BillInputList({ year, month }: BillInputListProps) {
         <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-foreground">
           <Receipt className="h-7 w-7 text-background" />
         </div>
-        <h3 className="font-display text-base font-bold">카드를 먼저 등록해주세요</h3>
+        <h3 className="font-display text-base font-bold">카드를 먼저 추가하세요</h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          자산 탭에서 카드를 추가하면<br />청구서를 입력할 수 있습니다.
+          자산 탭에서 카드를 추가하면<br />청구서를 입력할 수 있어요.
         </p>
       </div>
     );

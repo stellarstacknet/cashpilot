@@ -1,9 +1,9 @@
 // 하단 플로팅 탭 네비게이션
 // 5탭 구조, 가운데 홈 버튼 돌출 포인트 디자인
-import { LayoutDashboard, Receipt, ArrowLeftRight, Wallet, Settings } from 'lucide-react';
+import { LayoutDashboard, Receipt, ArrowLeftRight, Wallet, CalendarCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type TabId = 'bills' | 'transfer' | 'dashboard' | 'assets' | 'settings';
+export type TabId = 'bills' | 'transfer' | 'dashboard' | 'fixed' | 'assets';
 
 interface TabNavigationProps {
   activeTab: TabId;
@@ -16,8 +16,8 @@ const leftTabs: { id: TabId; label: string; icon: React.ComponentType<{ classNam
 ];
 
 const rightTabs: { id: TabId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: 'fixed', label: '고정비', icon: CalendarCheck },
   { id: 'assets', label: '자산', icon: Wallet },
-  { id: 'settings', label: '설정', icon: Settings },
 ];
 
 function TabButton({ id, label, icon: Icon, isActive, onClick }: {

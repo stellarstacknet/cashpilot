@@ -31,11 +31,6 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-7">
-      <div>
-        <p className="text-[12px] font-extrabold text-foreground tracking-wider uppercase">SETTINGS</p>
-        <h1 className="text-[22px] font-black tracking-tight mt-0.5">설정</h1>
-      </div>
-
       {/* 사용자 프로필 + 동기화 */}
       {user && (
         <div className="card-elevated p-5">
@@ -77,12 +72,12 @@ export function SettingsPage() {
             <p className="text-[15px] font-extrabold">결제일 알림</p>
             <p className="text-[12px] text-muted-foreground mt-0.5">
               {notifStatus === 'granted'
-                ? 'D-3, D-1에 알림을 받습니다'
+                ? 'D-3, D-1에 알림을 보내드려요'
                 : notifStatus === 'denied'
-                  ? '브라우저 설정에서 알림을 허용해주세요'
+                  ? '브라우저 설정에서 알림을 허용하세요'
                   : notifStatus === 'unsupported'
-                    ? '이 브라우저에서 알림을 지원하지 않습니다'
-                    : '결제일 전 알림을 받을 수 있습니다'}
+                    ? '이 브라우저는 알림을 지원하지 않아요'
+                    : '결제일 전 알림을 받을 수 있어요'}
             </p>
           </div>
           {notifStatus === 'granted' ? (

@@ -17,6 +17,7 @@ import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
 import { useTransferStatusStore } from '@/stores/useTransferStatusStore';
+import { useFixedExpenseStore } from '@/stores/useFixedExpenseStore';
 import { exportData, importData } from '@/utils/dataExport';
 import { APP_VERSION } from '@/utils/constants';
 
@@ -33,6 +34,7 @@ export function DataManagement() {
       accounts: accountStore.accounts,
       cards: cardStore.cards,
       bills: billStore.bills,
+      fixedExpenses: useFixedExpenseStore.getState().expenses,
     };
     const filename = `cashpilot-backup-${new Date().toISOString().slice(0, 10)}.json`;
     exportData(data, filename);
@@ -54,6 +56,9 @@ export function DataManagement() {
       if (Array.isArray(data.bills)) {
         useBillStore.setState({ bills: data.bills as never });
       }
+      if (Array.isArray(data.fixedExpenses)) {
+        useFixedExpenseStore.setState({ expenses: data.fixedExpenses as never });
+      }
 
       alert('데이터를 성공적으로 가져왔습니다!');
     } catch {
@@ -70,6 +75,7 @@ export function DataManagement() {
     cardStore.reset();
     billStore.reset();
     useTransferStatusStore.getState().reset();
+    useFixedExpenseStore.getState().reset();
   };
 
   return (
@@ -124,7 +130,7 @@ export function DataManagement() {
             <AlertDialogHeader>
               <AlertDialogTitle>모든 데이터를 초기화할까요?</AlertDialogTitle>
               <AlertDialogDescription>
-                모든 계좌, 카드, 청구서 데이터가 영구적으로 삭제됩니다.
+                모든 계좌, 카드, 청구서가 영구 삭제됩니다.
                 이 작업은 되돌릴 수 없습니다.
               </AlertDialogDescription>
             </AlertDialogHeader>

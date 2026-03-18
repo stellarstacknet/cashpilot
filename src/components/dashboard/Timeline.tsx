@@ -52,7 +52,7 @@ export function Timeline({ events, month, expandedDays, onToggleDay }: TimelineP
                 </span>
                 {dayEvents[0]?.originalDay && (
                   <span className="text-[10px] text-muted-foreground/60">
-                    ({dayEvents[0].originalDay}일에서 변경)
+                    (원래 {dayEvents[0].originalDay}일)
                   </span>
                 )}
               </div>

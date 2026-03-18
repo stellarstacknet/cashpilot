@@ -93,9 +93,9 @@ export function AccountManager() {
           <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-foreground">
             <Plus className="h-7 w-7 text-background" />
           </div>
-          <h3 className="font-display text-base font-bold">계좌를 등록해주세요</h3>
+          <h3 className="font-display text-base font-bold">계좌를 추가하세요</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            계좌를 추가하면 잔액 관리를 시작할 수 있습니다.
+            계좌를 추가하면 잔액 관리를 시작할 수 있어요.
           </p>
         </div>
       )}

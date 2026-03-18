@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
+import { useFixedExpenseStore } from '@/stores/useFixedExpenseStore';
 import { formatWon } from '@/utils/formatter';
 import { BANK_COLORS, getBankLogo, getCardLogo } from '@/utils/constants';
 import { ChevronRight } from 'lucide-react';
@@ -20,10 +21,24 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
   const accounts = useAccountStore((s) => s.accounts);
   const cards = useCardStore((s) => s.cards);
   const bills = useBillStore((s) => s.bills);
+  const fixedExpenses = useFixedExpenseStore((s) => s.expenses);
 
   const accountData = useMemo(() => {
     const monthBills = bills.filter((b) => b.year === year && b.month === month);
     const activeCards = cards.filter((c) => c.isActive);
+
+    // 아직 빠지지 않은 계좌이체 고정비
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const today = now.getDate();
+
+    let pendingFixed: typeof fixedExpenses = [];
+    if (year === currentYear && month === currentMonth) {
+      pendingFixed = fixedExpenses.filter((e) => e.payMethod === 'account' && e.accountId && e.payDay > today);
+    } else if (year > currentYear || (year === currentYear && month > currentMonth)) {
+      pendingFixed = fixedExpenses.filter((e) => e.payMethod === 'account' && e.accountId);
+    }
 
     return accounts.map((account) => {
       const linkedCards = activeCards.filter((c) => c.linkedAccountId === account.id);
@@ -31,22 +46,27 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
         const bill = monthBills.find((b) => b.cardId === card.id);
         return sum + (bill?.amount || 0);
       }, 0);
-      const afterPayment = account.balance - billTotal;
+      const fixedTotal = pendingFixed
+        .filter((e) => e.accountId === account.id)
+        .reduce((sum, e) => sum + e.amount, 0);
+      const totalDeductions = billTotal + fixedTotal;
+      const afterPayment = account.balance - totalDeductions;
+      const accountFixedExpenses = pendingFixed.filter((e) => e.accountId === account.id);
 
-      return { account, linkedCards, billTotal, afterPayment, monthBills };
+      return { account, linkedCards, billTotal, fixedTotal, totalDeductions, afterPayment, monthBills, accountFixedExpenses };
     });
-  }, [accounts, cards, bills, year, month]);
+  }, [accounts, cards, bills, fixedExpenses, year, month]);
 
   if (accounts.length === 0) return null;
 
   return (
     <div className="space-y-3">
-      {accountData.map(({ account, linkedCards, billTotal, afterPayment, monthBills }) => {
+      {accountData.map(({ account, linkedCards, billTotal, fixedTotal, totalDeductions, afterPayment, monthBills, accountFixedExpenses }) => {
         const remainingRatio = account.balance > 0
           ? Math.max(0, Math.min((afterPayment / account.balance) * 100, 100))
           : 0;
         const isExpanded = expandedIds.has(account.id);
-        const hasBills = billTotal > 0;
+        const hasDeductions = totalDeductions > 0;
 
         return (
           <div key={account.id} className="card-elevated overflow-hidden">
@@ -54,9 +74,9 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
             <div
               className={cn(
                 'flex items-center gap-3.5 p-5 press-scale',
-                hasBills && 'cursor-pointer',
+                hasDeductions && 'cursor-pointer',
               )}
-              onClick={() => hasBills && onToggle(account.id)}
+              onClick={() => hasDeductions && onToggle(account.id)}
             >
               {getBankLogo(account.bank) ? (
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
@@ -90,7 +110,7 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
                   </p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">결제 후</p>
                 </div>
-                {hasBills && (
+                {hasDeductions && (
                   <ChevronRight className={cn(
                     'h-4 w-4 text-muted-foreground/50 transition-transform duration-200',
                     isExpanded && 'rotate-90',
@@ -107,7 +127,7 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
               )}
             >
               <div className="overflow-hidden">
-                {hasBills && (
+                {hasDeductions && (
                   <div className="px-5 pb-5 pt-0 border-t border-border/50">
                     <div className="my-4">
                       <div className="h-[6px] bg-muted/60 overflow-hidden rounded-full">
@@ -152,6 +172,19 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
                           </div>
                         );
                       })}
+                      {accountFixedExpenses.map((expense) => (
+                        <div key={expense.id} className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-[8px] font-extrabold text-muted-foreground">
+                              {expense.payDay}
+                            </div>
+                            <span className="text-[13px] text-muted-foreground">{expense.name}</span>
+                          </div>
+                          <span className="text-[13px] font-bold text-[#e53535] tabular-nums">
+                            -{formatWon(expense.amount)}
+                          </span>
+                        </div>
+                      ))}
                     </div>
 
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-border/40">
@@ -165,7 +198,7 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
               </div>
             </div>
 
-            {billTotal === 0 && linkedCards.length === 0 && (
+            {totalDeductions === 0 && linkedCards.length === 0 && (
               <p className="px-5 pb-5 text-[12px] text-muted-foreground">연결된 카드 없음</p>
             )}
           </div>

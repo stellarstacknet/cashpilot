@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
+import { useFixedExpenseStore } from '@/stores/useFixedExpenseStore';
 import { calculateTransferPlan } from '@/utils/calculator';
 import { useHolidays } from './useHolidays';
 
@@ -11,11 +12,28 @@ export function useTransferPlan(year: number, month: number) {
   const accounts = useAccountStore((s) => s.accounts);
   const cards = useCardStore((s) => s.cards);
   const bills = useBillStore((s) => s.bills);
+  const fixedExpenses = useFixedExpenseStore((s) => s.expenses);
   const { holidays } = useHolidays(year, month);
 
+  // 아직 빠지지 않은 계좌이체 고정비만 포함
+  const pendingFixed = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const today = now.getDate();
+
+    if (year === currentYear && month === currentMonth) {
+      return fixedExpenses.filter((e) => e.payMethod === 'account' && e.accountId && e.payDay > today);
+    }
+    if (year > currentYear || (year === currentYear && month > currentMonth)) {
+      return fixedExpenses.filter((e) => e.payMethod === 'account' && e.accountId);
+    }
+    return [];
+  }, [fixedExpenses, year, month]);
+
   const result = useMemo(
-    () => calculateTransferPlan(accounts, cards, bills, year, month, holidays),
-    [accounts, cards, bills, year, month, holidays],
+    () => calculateTransferPlan(accounts, cards, bills, year, month, holidays, pendingFixed),
+    [accounts, cards, bills, year, month, holidays, pendingFixed],
   );
 
   return result;

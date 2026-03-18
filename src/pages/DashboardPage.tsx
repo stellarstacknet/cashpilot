@@ -1,7 +1,7 @@
 // 대시보드 페이지
 // 총 잔액, 청구액, 잔여금, 계좌별 현황, 결제 타임라인 표시
 import { useState, useMemo, useCallback } from 'react';
-import { CalendarX, ChevronLeft, ChevronRight, ChevronsUpDown } from 'lucide-react';
+import { CalendarX, ChevronLeft, ChevronRight, ChevronsUpDown, Settings } from 'lucide-react';
 import { SummaryCards } from '@/components/dashboard/SummaryCards';
 import { WarningBanner } from '@/components/dashboard/WarningBanner';
 import { AccountOverview } from '@/components/dashboard/AccountOverview';
@@ -22,9 +22,10 @@ interface DashboardPageProps {
     isCurrentMonth: boolean;
     canGoNext: boolean;
   };
+  onOpenSettings: () => void;
 }
 
-export function DashboardPage({ monthNav }: DashboardPageProps) {
+export function DashboardPage({ monthNav, onOpenSettings }: DashboardPageProps) {
   const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth, canGoNext } = monthNav;
   const summary = useDashboardSummary(year, month);
   const { warnings } = useTransferPlan(year, month);
@@ -85,10 +86,16 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
         <div>
           <p className="text-[11px] font-extrabold text-muted-foreground/60 tracking-wider uppercase">CASHPILOT</p>
           <h1 className="text-[22px] font-black tracking-tight mt-0.5 text-white">
-            내 자산 현황
+            내 자산
           </h1>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            onClick={onOpenSettings}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted active:scale-95"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
           <button
             onClick={goToPrevMonth}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted active:scale-95"
@@ -123,7 +130,7 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
           </div>
           <h3 className="text-[17px] font-extrabold">{formatYearMonth(year, month)}</h3>
           <p className="mt-1.5 text-[14px] text-muted-foreground">
-            이 달의 청구서 데이터가 없습니다.
+            이번 달 청구서 데이터가 없습니다.
           </p>
         </div>
       ) : (
@@ -139,7 +146,7 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
           {/* 계좌별 현황 */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="section-label">계좌별 현황</h2>
+              <h2 className="section-label">내 계좌</h2>
               <button
                 onClick={toggleAllAccounts}
                 className={cn(
@@ -163,7 +170,7 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
           {/* 결제 타임라인 */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="section-label">결제 타임라인</h2>
+              <h2 className="section-label">결제 일정</h2>
               <button
                 onClick={toggleAllDays}
                 className={cn(

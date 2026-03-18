@@ -43,6 +43,24 @@ export interface MonthlyBill {
   updatedAt: string;
 }
 
+// ── 고정비용 인터페이스 ──
+export type FixedExpensePayMethod = 'card' | 'account';
+export type FixedExpenseCategory = 'rental' | 'subscription' | 'telecom' | 'utility' | 'insurance';
+
+export interface FixedExpense {
+  id: string;
+  name: string;           // 항목명 (넷플릭스, 통신비 등)
+  amount: number;         // 월 금액
+  category: FixedExpenseCategory; // 카테고리
+  payMethod: FixedExpensePayMethod; // 결제 수단 유형
+  cardId?: string;        // 카드 결제 시 연결 카드 ID
+  accountId?: string;     // 계좌이체 시 연결 계좌 ID
+  payDay: number;         // 결제일 (1-31)
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // ── 이체 플랜 인터페이스 (자동 계산 결과) ──
 export interface TransferPlan {
   id: string;
