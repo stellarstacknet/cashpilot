@@ -20,7 +20,7 @@ export function MonthSelector({
   isCurrentMonth,
 }: MonthSelectorProps) {
   return (
-    <div className="flex items-center justify-between rounded-xl bg-white p-2 shadow-sm border">
+    <div className="flex items-center justify-between rounded-xl bg-card p-2 shadow-sm border">
       <Button variant="ghost" size="icon" onClick={onPrev} className="rounded-lg">
         <ChevronLeft className="h-5 w-5" />
       </Button>
