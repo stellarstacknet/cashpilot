@@ -84,7 +84,7 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
       <div className="flex items-end justify-between">
         <div>
           <p className="text-[11px] font-extrabold text-muted-foreground/60 tracking-wider uppercase">CASHPILOT</p>
-          <h1 className="text-[22px] font-black tracking-tight mt-0.5">
+          <h1 className="text-[22px] font-black tracking-tight mt-0.5 text-white">
             내 자산 현황
           </h1>
         </div>

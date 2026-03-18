@@ -111,7 +111,7 @@ export function SummaryCards({
   return (
     <div className="space-y-3">
       {/* 히어로 카드 — 잔여액이 메인 */}
-      <div className="hero-gradient rounded-xl p-6 text-white overflow-hidden">
+      <div className="card-elevated rounded-xl p-6 text-white overflow-hidden">
         <div className="relative z-10">
           {/* 메인: 잔여액 + 도넛 */}
           <div className="flex items-start justify-between">
@@ -119,8 +119,8 @@ export function SummaryCards({
               <p className="text-[12px] font-bold text-white/50 tracking-wider uppercase">
                 결제 후 잔여
               </p>
-              <p className="mt-3 font-display text-[36px] font-black leading-none tracking-tight tabular-nums text-white">
-                {formatCurrency(animatedRemaining)}<span className="text-[20px] font-extrabold text-white/50 ml-1">원</span>
+              <p className="mt-3 font-display text-[36px] font-black leading-none tracking-tight tabular-nums text-[#ffffff]">
+                {formatCurrency(animatedRemaining)}<span className="text-[20px] font-extrabold text-white/60 ml-1">원</span>
               </p>
             </div>
 

@@ -33,7 +33,7 @@ function TabButton({ id, label, icon: Icon, isActive, onClick }: {
       onClick={onClick}
       className={cn(
         'relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs transition-all duration-200',
-        isActive ? 'text-foreground' : 'text-muted-foreground',
+        isActive ? 'text-white' : 'text-muted-foreground',
       )}
     >
       <Icon className={cn(
@@ -42,7 +42,7 @@ function TabButton({ id, label, icon: Icon, isActive, onClick }: {
       )} />
       <span className={cn(
         'text-[10px] tracking-tight',
-        isActive ? 'text-foreground font-extrabold' : 'text-muted-foreground font-bold',
+        isActive ? 'text-white font-extrabold' : 'text-muted-foreground font-bold',
       )}>
         {label}
       </span>
@@ -83,7 +83,7 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
           </button>
           <span className={cn(
             'text-[10px] tracking-tight mt-1 mb-1.5',
-            isDashboardActive ? 'text-foreground font-extrabold' : 'text-muted-foreground font-bold',
+            isDashboardActive ? 'text-white font-extrabold' : 'text-muted-foreground font-bold',
           )}>
             홈
           </span>

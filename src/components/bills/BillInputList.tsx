@@ -53,7 +53,7 @@ export function BillInputList({ year, month }: BillInputListProps) {
         />
       ))}
 
-      <div className="hero-gradient rounded-xl p-4 text-white">
+      <div className="card-elevated rounded-xl p-4 text-white">
         <div className="relative z-10 flex items-center justify-between">
           <div>
             <p className="text-[11px] font-semibold text-white/60">총 청구액</p>
