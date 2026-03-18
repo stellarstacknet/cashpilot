@@ -26,6 +26,12 @@ export async function pullFromSupabase(): Promise<SyncResult> {
       supabase.from('fixed_expenses').select('*').order('sort_order'),
     ]);
 
+    // 에러 체크
+    const firstError = [accountsRes, cardsRes, billsRes, fixedRes].find((r) => r.error);
+    if (firstError?.error) {
+      throw firstError.error;
+    }
+
     // Supabase snake_case → 로컬 camelCase 변환 후 store 업데이트
     if (accountsRes.data) {
       const accounts: Account[] = accountsRes.data.map((a) => ({
@@ -89,8 +95,11 @@ export async function pullFromSupabase(): Promise<SyncResult> {
     }
 
     return { success: true };
-  } catch (e) {
-    return { success: false, error: e instanceof Error ? e.message : '동기화 실패' };
+  } catch (e: unknown) {
+    const err = e as { message?: string; details?: string; hint?: string };
+    const msg = err.message || '동기화 실패';
+    console.error('Pull sync error:', msg, err);
+    return { success: false, error: msg };
   }
 }
 
@@ -112,6 +121,7 @@ export async function pushToSupabase(): Promise<SyncResult> {
       const { error } = await supabase.from('accounts').upsert({
         id: a.id,
         user_id: user.id,
+        name: a.bank,
         bank: a.bank,
         balance: a.balance,
         purpose: a.purpose,
@@ -169,10 +179,12 @@ export async function pushToSupabase(): Promise<SyncResult> {
     }
 
     return { success: true };
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : '동기화 실패';
-    console.error('Push sync error:', msg);
-    return { success: false, error: msg };
+  } catch (e: unknown) {
+    const err = e as { message?: string; details?: string; hint?: string; code?: string };
+    const msg = err.message || '동기화 실패';
+    const details = err.details || err.hint || '';
+    console.error('Push sync error:', msg, details, err);
+    return { success: false, error: details ? `${msg} (${details})` : msg };
   }
 }
 

@@ -22,15 +22,19 @@ export function SettingsPage() {
       const pushResult = await pushToSupabase();
       if (!pushResult.success) {
         setSyncMessage({ type: 'error', text: pushResult.error });
+        setSyncing(false);
         return;
       }
       const pullResult = await pullFromSupabase();
       if (!pullResult.success) {
         setSyncMessage({ type: 'error', text: pullResult.error });
+        setSyncing(false);
         return;
       }
       setSyncMessage({ type: 'success', text: '동기화 완료' });
       setTimeout(() => setSyncMessage(null), 3000);
+    } catch (e) {
+      setSyncMessage({ type: 'error', text: e instanceof Error ? e.message : '알 수 없는 오류' });
     } finally {
       setSyncing(false);
     }
