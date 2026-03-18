@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { useCurrencyInput } from '@/hooks/useCurrencyInput';
 import { Plus, Pencil, Trash2, ChevronRight, Tv, Phone, Droplets, Package, Shield } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
@@ -54,10 +55,14 @@ const CATEGORY_COLORS: Record<FixedExpenseCategory, string> = {
 };
 
 export function FixedExpensePage() {
-  const { expenses, addExpense, updateExpense, deleteExpense } = useFixedExpenseStore();
+  const expenses = useFixedExpenseStore((s) => s.expenses);
+  const addExpense = useFixedExpenseStore((s) => s.addExpense);
+  const updateExpense = useFixedExpenseStore((s) => s.updateExpense);
+  const deleteExpense = useFixedExpenseStore((s) => s.deleteExpense);
   const cards = useCardStore((s) => s.cards);
   const accounts = useAccountStore((s) => s.accounts);
 
+  const amountInput = useCurrencyInput();
   const [isOpen, setIsOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
@@ -428,12 +433,13 @@ export function FixedExpensePage() {
             <div>
               <Label>금액</Label>
               <Input
+                ref={amountInput.ref}
                 type="text"
                 inputMode="numeric"
                 value={form.amount}
                 onChange={(e) => {
-                  const amount = parseAmountInput(e.target.value);
-                  setForm({ ...form, amount: amount > 0 ? formatCurrency(amount) : '' });
+                  const formatted = amountInput.handleChange(e.target.value, e.target.selectionStart);
+                  setForm({ ...form, amount: formatted });
                 }}
                 placeholder="0"
               />

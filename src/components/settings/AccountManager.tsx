@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCurrencyInput } from '@/hooks/useCurrencyInput';
 import { Plus, Pencil, Trash2, AlertTriangle, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,7 @@ export function AccountManager() {
     balance: '',
     purpose: 'general' as AccountPurpose,
   });
+  const balanceInput = useCurrencyInput();
 
   const linkedCards = deleteTarget
     ? cards.filter((c) => c.linkedAccountId === deleteTarget)
@@ -213,12 +215,13 @@ export function AccountManager() {
             <div>
               <Label>잔액</Label>
               <Input
+                ref={balanceInput.ref}
                 type="text"
                 inputMode="numeric"
                 value={form.balance}
                 onChange={(e) => {
-                  const amount = parseAmountInput(e.target.value);
-                  setForm({ ...form, balance: amount > 0 ? formatCurrency(amount) : '' });
+                  const formatted = balanceInput.handleChange(e.target.value, e.target.selectionStart);
+                  setForm({ ...form, balance: formatted });
                 }}
                 placeholder="0"
               />

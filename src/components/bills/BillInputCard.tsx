@@ -6,6 +6,7 @@ import { useAccountStore } from '@/stores/useAccountStore';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getCardLogo } from '@/utils/constants';
+import { useCurrencyInput } from '@/hooks/useCurrencyInput';
 
 interface BillInputCardProps {
   card: CardType;
@@ -27,6 +28,7 @@ export function BillInputCard({
   const accounts = useAccountStore((s) => s.accounts);
   const linkedAccount = accounts.find((a) => a.id === card.linkedAccountId);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const currencyInput = useCurrencyInput();
 
   // 외부에서 bill이 변경되면 입력값 동기화
   useEffect(() => {
@@ -37,11 +39,9 @@ export function BillInputCard({
 
   // 금액 입력 핸들러 (실시간 콤마 포맷팅 + 디바운스 저장)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-    const amount = parseAmountInput(raw);
-
-    // 실시간 콤마 포맷팅 적용
-    setInputValue(amount > 0 ? formatCurrency(amount) : '');
+    const formatted = currencyInput.handleChange(e.target.value, e.target.selectionStart);
+    const amount = parseAmountInput(formatted);
+    setInputValue(formatted);
 
     // 디바운스로 store 업데이트 (300ms)
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -100,6 +100,7 @@ export function BillInputCard({
 
       <div className="mt-3 flex items-center gap-2">
         <Input
+          ref={currencyInput.ref}
           type="text"
           inputMode="numeric"
           placeholder={
