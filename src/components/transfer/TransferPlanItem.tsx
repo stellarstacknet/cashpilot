@@ -30,7 +30,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
             plan.priority === 1
               ? 'bg-rose-500/10 text-rose-500'
               : plan.priority <= 3
-                ? 'bg-orange-500/10 text-orange-500'
+                ? 'bg-purple-700/10 text-purple-700 dark:text-purple-400'
                 : 'bg-muted text-muted-foreground',
           )}>
             {plan.priority}

@@ -7,7 +7,7 @@ export function LoginPage() {
     <div className="mesh-gradient flex min-h-screen flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm space-y-12 text-center">
         <div>
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[22px] hero-gradient shadow-xl shadow-orange-500/20">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[22px] hero-gradient shadow-xl shadow-purple-900/25">
             <span className="relative z-10 font-display text-3xl font-extrabold text-white">C</span>
           </div>
           <h1 className="font-display text-3xl font-extrabold tracking-tight">

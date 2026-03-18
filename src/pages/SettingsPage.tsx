@@ -1,7 +1,5 @@
 import { Download, LogOut, RefreshCw, Check, Sun, Moon, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AccountManager } from '@/components/settings/AccountManager';
-import { CardManager } from '@/components/settings/CardManager';
 import { DataManagement } from '@/components/settings/DataManagement';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { pullFromSupabase, pushToSupabase } from '@/lib/sync';
@@ -122,16 +120,6 @@ export function SettingsPage() {
           ) : null}
         </div>
       </div>
-
-      <section>
-        <p className="section-label mb-2.5">계좌 관리</p>
-        <AccountManager />
-      </section>
-
-      <section>
-        <p className="section-label mb-2.5">카드 관리</p>
-        <CardManager />
-      </section>
 
       <section>
         <p className="section-label mb-2.5">데이터</p>

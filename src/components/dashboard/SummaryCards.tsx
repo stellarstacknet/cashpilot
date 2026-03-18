@@ -15,7 +15,7 @@ export function SummaryCards({
 }: SummaryCardsProps) {
   return (
     <div className="space-y-3">
-      <div className="hero-gradient rounded-[20px] p-6 text-white shadow-xl shadow-orange-500/20 dark:shadow-orange-500/10">
+      <div className="hero-gradient rounded-[20px] p-6 text-white shadow-xl shadow-purple-900/25 dark:shadow-purple-900/15">
         <div className="relative z-10">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">
             Total Balance

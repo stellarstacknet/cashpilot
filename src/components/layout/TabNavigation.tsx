@@ -1,7 +1,7 @@
-import { LayoutDashboard, Receipt, ArrowRightLeft, Settings } from 'lucide-react';
+import { LayoutDashboard, Receipt, Wallet, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type TabId = 'dashboard' | 'bills' | 'transfer' | 'settings';
+export type TabId = 'dashboard' | 'bills' | 'assets' | 'settings';
 
 interface TabNavigationProps {
   activeTab: TabId;
@@ -11,7 +11,7 @@ interface TabNavigationProps {
 const tabs: { id: TabId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'dashboard', label: '홈', icon: LayoutDashboard },
   { id: 'bills', label: '청구서', icon: Receipt },
-  { id: 'transfer', label: '이체', icon: ArrowRightLeft },
+  { id: 'assets', label: '자산', icon: Wallet },
   { id: 'settings', label: '설정', icon: Settings },
 ];
 
@@ -26,15 +26,15 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
               key={id}
               onClick={() => onTabChange(id)}
               className={cn(
-                'relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all duration-300',
+                'relative flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-xs font-semibold transition-all duration-300',
                 isActive
-                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-                  : 'text-muted-foreground hover:text-foreground',
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 w-[88px]'
+                  : 'text-muted-foreground hover:text-foreground w-11',
               )}
             >
               <Icon className={cn('h-[18px] w-[18px]', isActive && 'stroke-[2.5]')} />
               {isActive && (
-                <span className="font-display text-[11px] tracking-wide">{label}</span>
+                <span className="font-display text-[11px] tracking-wide whitespace-nowrap">{label}</span>
               )}
             </button>
           );
