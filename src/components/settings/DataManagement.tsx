@@ -20,6 +20,8 @@ import { useTransferStatusStore } from '@/stores/useTransferStatusStore';
 import { useFixedExpenseStore } from '@/stores/useFixedExpenseStore';
 import { exportData, importData } from '@/utils/dataExport';
 import { APP_VERSION } from '@/utils/constants';
+import { dbSaveAccounts, dbSaveCards, dbSaveFixedExpenses, dbSaveBill } from '@/lib/db';
+import type { Account, Card, MonthlyBill, FixedExpense } from '@/types';
 
 export function DataManagement() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -48,19 +50,27 @@ export function DataManagement() {
       const data = await importData(file) as Record<string, unknown>;
 
       if (Array.isArray(data.accounts)) {
-        useAccountStore.setState({ accounts: data.accounts as never });
+        const accounts = data.accounts as Account[];
+        useAccountStore.setState({ accounts });
+        dbSaveAccounts(accounts);
       }
       if (Array.isArray(data.cards)) {
-        useCardStore.setState({ cards: data.cards as never });
+        const cards = data.cards as Card[];
+        useCardStore.setState({ cards });
+        dbSaveCards(cards);
       }
       if (Array.isArray(data.bills)) {
-        useBillStore.setState({ bills: data.bills as never });
+        const bills = data.bills as MonthlyBill[];
+        useBillStore.setState({ bills });
+        for (const bill of bills) dbSaveBill(bill);
       }
       if (Array.isArray(data.fixedExpenses)) {
-        useFixedExpenseStore.setState({ expenses: data.fixedExpenses as never });
+        const expenses = data.fixedExpenses as FixedExpense[];
+        useFixedExpenseStore.setState({ expenses });
+        dbSaveFixedExpenses(expenses);
       }
 
-      alert('데이터를 성공적으로 가져왔습니다!');
+      alert('데이터를 가져오고 서버에 저장했어요!');
     } catch {
       alert('데이터 가져오기에 실패했습니다. 파일 형식을 확인해 주세요.');
     }
