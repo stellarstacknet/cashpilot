@@ -29,7 +29,7 @@ export function BillInputList({ year, month }: BillInputListProps) {
   // 카드가 없는 경우 안내 메시지와 CTA 표시
   if (cards.length === 0) {
     return (
-      <div className="glass-elevated rounded-2xl py-16 text-center">
+      <div className="card-elevated py-16 text-center">
         <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
           <Receipt className="h-7 w-7 text-primary" />
         </div>
@@ -53,18 +53,18 @@ export function BillInputList({ year, month }: BillInputListProps) {
         />
       ))}
 
-      <div className="hero-gradient rounded-2xl p-4 text-white">
+      <div className="hero-gradient rounded-2xl p-4 text-white dark:text-black">
         <div className="relative z-10 flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-medium text-white/60">총 청구액</p>
+            <p className="text-[11px] font-medium text-white/60 dark:text-black/50">총 청구액</p>
             <p className="font-display text-xl font-bold tabular-nums tracking-tight mt-0.5">
               {formatWon(totalBills)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[11px] text-white/60">{enteredCount}/{cards.length} 입력</p>
+            <p className="text-[11px] text-white/60 dark:text-black/50">{enteredCount}/{cards.length} 입력</p>
             {allEntered && (
-              <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-200">
+              <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-white/70 dark:text-black/60">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 완료
               </div>

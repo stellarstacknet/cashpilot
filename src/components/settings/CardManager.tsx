@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,16 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useCardStore } from '@/stores/useCardStore';
 import { useAccountStore } from '@/stores/useAccountStore';
+import { useBillStore } from '@/stores/useBillStore';
 import { CARD_ISSUERS, CARD_ISSUER_COLORS, CARD_COLORS } from '@/utils/constants';
+import { formatWon } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
 
-// 카드 관리 컴포넌트
-// 카드 추가/수정/삭제, 활성화 토글, 커스텀 색상 선택 기능
 export function CardManager() {
   const { cards, addCard, updateCard, deleteCard, toggleActive } = useCardStore();
   const accounts = useAccountStore((s) => s.accounts);
+  const getBillForCard = useBillStore((s) => s.getBillForCard);
   const [isOpen, setIsOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: '',
     issuer: '',
@@ -24,6 +26,10 @@ export function CardManager() {
     linkedAccountId: '',
     color: '',
   });
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
 
   const resetForm = () => {
     setForm({ name: '', issuer: '', paymentDay: '15', linkedAccountId: '', color: '' });
@@ -48,10 +54,7 @@ export function CardManager() {
 
   const handleSave = () => {
     if (!form.issuer || !form.linkedAccountId) return;
-
-    // 색상 우선순위: 커스텀 선택 > 카드사 브랜드 색상 > 기본 회색
     const selectedColor = form.color || CARD_ISSUER_COLORS[form.issuer] || '#6B7280';
-
     const data = {
       name: form.name || form.issuer,
       issuer: form.issuer,
@@ -70,22 +73,22 @@ export function CardManager() {
     resetForm();
   };
 
-  // 카드사 변경 시 브랜드 색상으로 자동 설정
   const handleIssuerChange = (issuer: string) => {
-    setForm({
-      ...form,
-      issuer,
-      color: CARD_ISSUER_COLORS[issuer] || '',
-    });
+    setForm({ ...form, issuer, color: CARD_ISSUER_COLORS[issuer] || '' });
+  };
+
+  // 연결 계좌명 조회
+  const getLinkedAccountName = (accountId: string) => {
+    const account = accounts.find((a) => a.id === accountId);
+    return account ? `${account.bank} ${account.name}` : '';
   };
 
   return (
-    <div className="space-y-2.5">
-      {/* 빈 상태 */}
+    <div className="space-y-3">
       {cards.length === 0 && (
-        <div className="glass-elevated rounded-2xl py-14 text-center">
-          <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
-            <Plus className="h-7 w-7 text-primary" />
+        <div className="card-elevated rounded-2xl py-16 text-center">
+          <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/10">
+            <Plus className="h-7 w-7 text-foreground" />
           </div>
           <h3 className="font-display text-base font-semibold">카드를 등록해주세요</h3>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -94,51 +97,113 @@ export function CardManager() {
         </div>
       )}
 
-      {/* 카드 목록 */}
-      {cards.map((card) => (
-        <div key={card.id} className={cn('glass-elevated rounded-2xl p-4 press-scale', !card.isActive && 'opacity-45')}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white text-[10px] font-bold"
-                style={{ backgroundColor: card.color }}
-              >
-                {card.name.slice(0, 2)}
+      {cards.map((card) => {
+        const bill = getBillForCard(card.id, currentYear, currentMonth);
+        const linkedName = getLinkedAccountName(card.linkedAccountId);
+        const isExpanded = expandedId === card.id;
+
+        return (
+          <div
+            key={card.id}
+            className={cn(
+              'card-elevated rounded-2xl overflow-hidden transition-opacity',
+              !card.isActive && 'opacity-40',
+            )}
+          >
+            {/* 미니 카드 비주얼 */}
+            <div
+              className="relative px-5 pt-5 pb-4 cursor-pointer"
+              onClick={() => setExpandedId(isExpanded ? null : card.id)}
+            >
+              <div className="flex items-start justify-between">
+                {/* 카드 이미지 + 정보 */}
+                <div className="flex items-center gap-3.5">
+                  <div
+                    className="relative h-[52px] w-[82px] shrink-0 rounded-xl overflow-hidden"
+                    style={{ backgroundColor: card.color }}
+                  >
+                    {/* 카드 표면 디테일 */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+                    <div className="absolute left-3 top-2.5 h-[10px] w-[14px] rounded-[2px] bg-white/40" />
+                    <div className="absolute bottom-2 left-3 right-3">
+                      <p className="text-[7px] font-bold text-white/80 tracking-wider truncate">
+                        {card.name}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-[15px] font-bold">{card.name}</p>
+                    <p className="text-[12px] text-muted-foreground mt-0.5">
+                      {card.issuer}
+                    </p>
+                  </div>
+                </div>
+
+                <ChevronRight className={cn(
+                  'h-4 w-4 text-muted-foreground/50 mt-1 transition-transform duration-200',
+                  isExpanded && 'rotate-90',
+                )} />
               </div>
-              <div>
-                <p className="text-sm font-semibold">{card.name}</p>
-                <p className="text-[11px] text-muted-foreground">
-                  {card.issuer} · 결제일 {card.paymentDay}일
+
+              {/* 이번 달 청구액 */}
+              <div className="mt-4 pt-3.5 border-t border-border/40">
+                <div className="flex items-center justify-between">
+                  <p className="text-[12px] text-muted-foreground">
+                    {currentMonth}월 청구액
+                  </p>
+                  <p className="text-[12px] text-muted-foreground">
+                    결제일 {card.paymentDay}일
+                  </p>
+                </div>
+                <p className="font-display text-[20px] font-bold tabular-nums tracking-tight mt-1">
+                  {formatWon(bill?.amount || 0)}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-0.5">
-              <button
-                onClick={() => toggleActive(card.id)}
-                className={cn(
-                  'rounded-lg px-2 py-1 text-[10px] font-bold transition-colors',
-                  card.isActive
-                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : 'bg-muted text-muted-foreground',
-                )}
-              >
-                {card.isActive ? 'ON' : 'OFF'}
-              </button>
-              <button onClick={() => openEdit(card.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
-                <Pencil className="h-3.5 w-3.5" />
-              </button>
-              <button onClick={() => deleteCard(card.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500 transition-colors">
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
+
+            {/* 확장 영역: 상세 정보 + 액션 */}
+            {isExpanded && (
+              <div className="border-t border-border/40 bg-muted/30">
+                <div className="px-5 py-3.5 space-y-2.5">
+                  {linkedName && (
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-muted-foreground">연결 계좌</span>
+                      <span className="font-medium">{linkedName}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex border-t border-border/40">
+                  <button
+                    onClick={() => toggleActive(card.id)}
+                    className="flex-1 py-3 text-[13px] font-semibold text-center border-r border-border/40 transition-colors hover:bg-muted/50"
+                  >
+                    {card.isActive ? 'OFF' : 'ON'}
+                  </button>
+                  <button
+                    onClick={() => openEdit(card.id)}
+                    className="flex-1 py-3 text-[13px] font-semibold text-center border-r border-border/40 transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                  >
+                    <Pencil className="h-3.5 w-3.5" /> 수정
+                  </button>
+                  <button
+                    onClick={() => deleteCard(card.id)}
+                    className="flex-1 py-3 text-[13px] font-semibold text-muted-foreground text-center transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> 삭제
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* 카드 추가 버튼 */}
       <button
         onClick={openAdd}
-        className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 p-3.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+        className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 py-5 text-[13px] font-semibold text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
       >
         <Plus className="h-4 w-4" /> 카드 추가
       </button>
@@ -150,7 +215,6 @@ export function CardManager() {
             <DialogTitle>{editId ? '카드 수정' : '카드 추가'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {/* 카드사 선택 */}
             <div>
               <Label>카드사</Label>
               <Select value={form.issuer} onValueChange={handleIssuerChange}>
@@ -168,7 +232,6 @@ export function CardManager() {
               </Select>
             </div>
 
-            {/* 카드 별칭 */}
             <div>
               <Label>카드 별칭 <span className="text-muted-foreground font-normal">(선택)</span></Label>
               <Input
@@ -178,7 +241,6 @@ export function CardManager() {
               />
             </div>
 
-            {/* 결제일 */}
             <div>
               <Label>결제일 (1-28)</Label>
               <Input
@@ -190,7 +252,6 @@ export function CardManager() {
               />
             </div>
 
-            {/* 연결 계좌 */}
             <div>
               <Label>연결 계좌</Label>
               <Select
@@ -208,24 +269,21 @@ export function CardManager() {
               </Select>
             </div>
 
-            {/* 카드 색상 커스텀 선택 */}
             <div>
               <Label>카드 색상</Label>
               <div className="mt-2 flex flex-wrap gap-2">
-                {/* 카드사 기본 색상 */}
                 {form.issuer && CARD_ISSUER_COLORS[form.issuer] && (
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, color: CARD_ISSUER_COLORS[form.issuer] })}
                     className={cn(
                       'h-8 w-8 rounded-lg transition-all ring-offset-2 ring-offset-background',
-                      form.color === CARD_ISSUER_COLORS[form.issuer] && 'ring-2 ring-primary scale-110',
+                      form.color === CARD_ISSUER_COLORS[form.issuer] && 'ring-2 ring-foreground scale-110',
                     )}
                     style={{ backgroundColor: CARD_ISSUER_COLORS[form.issuer] }}
                     title="카드사 기본 색상"
                   />
                 )}
-                {/* 프리셋 색상 목록 */}
                 {CARD_COLORS.map((color) => (
                   <button
                     key={color}
@@ -233,7 +291,7 @@ export function CardManager() {
                     onClick={() => setForm({ ...form, color })}
                     className={cn(
                       'h-8 w-8 rounded-lg transition-all ring-offset-2 ring-offset-background',
-                      form.color === color && 'ring-2 ring-primary scale-110',
+                      form.color === color && 'ring-2 ring-foreground scale-110',
                     )}
                     style={{ backgroundColor: color }}
                   />

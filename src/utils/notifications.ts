@@ -1,5 +1,6 @@
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
+import { getCachedHolidays, fetchHolidays, adjustToBusinessDay } from './holidays';
 
 // 알림 권한 요청
 export async function requestNotificationPermission(): Promise<boolean> {
@@ -18,8 +19,8 @@ export function getNotificationStatus(): 'granted' | 'denied' | 'default' | 'uns
 }
 
 // 결제일 알림 스케줄링
-// D-3, D-1에 알림을 보내기 위해 매일 확인하는 방식
-export function checkAndNotify(): void {
+// 공휴일 보정된 실제 결제일 기준으로 D-3, D-1 알림
+export async function checkAndNotify(): Promise<void> {
   const status = getNotificationStatus();
   if (status !== 'granted') return;
 
@@ -31,7 +32,12 @@ export function checkAndNotify(): void {
   const cards = useCardStore.getState().cards.filter((c) => c.isActive);
   const bills = useBillStore.getState().bills;
 
-  // 현재 월의 청구서가 있는 카드만 대상
+  // 공휴일 데이터 확보
+  let holidays = getCachedHolidays(currentYear);
+  if (holidays.length === 0) {
+    holidays = await fetchHolidays(currentYear);
+  }
+
   const monthBills = bills.filter(
     (b) => b.year === currentYear && b.month === currentMonth && !b.isPaid,
   );
@@ -40,13 +46,15 @@ export function checkAndNotify(): void {
     const bill = monthBills.find((b) => b.cardId === card.id);
     if (!bill || bill.amount === 0) continue;
 
-    const daysUntil = card.paymentDay - today;
+    // 공휴일 보정된 실제 결제일
+    const adjustedDay = adjustToBusinessDay(currentYear, currentMonth, card.paymentDay, holidays);
+    const daysUntil = adjustedDay - today;
 
     // D-3 알림
     if (daysUntil === 3) {
       showNotification(
         `${card.name} 결제 D-3`,
-        `${card.paymentDay}일 결제 예정: ${bill.amount.toLocaleString()}원`,
+        `${adjustedDay}일 결제 예정: ${bill.amount.toLocaleString()}원`,
       );
     }
 
@@ -54,7 +62,7 @@ export function checkAndNotify(): void {
     if (daysUntil === 1) {
       showNotification(
         `${card.name} 내일 결제!`,
-        `${card.paymentDay}일 결제 예정: ${bill.amount.toLocaleString()}원`,
+        `${adjustedDay}일 결제 예정: ${bill.amount.toLocaleString()}원`,
       );
     }
 
@@ -70,7 +78,6 @@ export function checkAndNotify(): void {
 
 // 알림 표시
 function showNotification(title: string, body: string): void {
-  // 같은 알림 중복 방지 (localStorage에 날짜별 기록)
   const key = `cashpilot-notif-${new Date().toISOString().slice(0, 10)}-${title}`;
   if (localStorage.getItem(key)) return;
   localStorage.setItem(key, '1');
@@ -89,11 +96,9 @@ let notificationInterval: ReturnType<typeof setInterval> | null = null;
 export function startNotificationScheduler(): void {
   if (notificationInterval) return;
 
-  // 즉시 한번 체크
   checkAndNotify();
 
-  // 1시간마다 체크
-  notificationInterval = setInterval(checkAndNotify, 60 * 60 * 1000);
+  notificationInterval = setInterval(() => { checkAndNotify(); }, 60 * 60 * 1000);
 }
 
 export function stopNotificationScheduler(): void {

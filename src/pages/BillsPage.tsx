@@ -19,10 +19,10 @@ export function BillsPage({ monthNav }: BillsPageProps) {
   const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth, canGoNext } = monthNav;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-7">
       <div>
-        <p className="text-[11px] font-semibold text-muted-foreground">BILLS</p>
-        <h1 className="font-display text-xl font-extrabold tracking-tight">청구서 입력</h1>
+        <p className="text-[12px] font-bold text-muted-foreground tracking-wider uppercase">BILLS</p>
+        <h1 className="text-[22px] font-extrabold tracking-tight mt-0.5">청구서 입력</h1>
       </div>
 
       <MonthSelector

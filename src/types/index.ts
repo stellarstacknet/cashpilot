@@ -95,7 +95,8 @@ export interface TransferCalculationResult {
 
 // ── 타임라인 이벤트 인터페이스 ──
 export interface TimelineEvent {
-  day: number;           // 발생일
+  day: number;           // 발생일 (영업일 보정 후)
+  originalDay?: number;  // 원래 결제일 (보정 전, 다를 때만 존재)
   type: 'income' | 'bill'; // 이벤트 유형
   label: string;         // 표시명 (카드명 등)
   amount: number;        // 금액

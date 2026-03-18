@@ -22,7 +22,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
 
   return (
     <div className={cn(
-      'glass-elevated rounded-2xl p-4 press-scale transition-opacity',
+      'card-elevated p-5 press-scale transition-opacity',
       isDone && 'opacity-45',
     )}>
       <div className="flex items-center justify-between mb-3">
@@ -30,15 +30,13 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
           <span className={cn(
             'flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-bold',
             plan.priority === 1
-              ? 'bg-rose-500/10 text-rose-500'
-              : plan.priority <= 3
-                ? 'bg-purple-700/10 text-purple-700 dark:text-purple-400'
-                : 'bg-muted text-muted-foreground',
+              ? 'bg-foreground text-background'
+              : 'bg-muted text-muted-foreground',
           )}>
             {plan.priority}
           </span>
           {plan.status === 'done' && (
-            <span className="flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="flex items-center gap-1 rounded-lg bg-muted px-2 py-0.5 text-[10px] font-semibold text-foreground">
               <Check className="h-3 w-3" /> 완료
             </span>
           )}
@@ -69,7 +67,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
           <Button
             size="sm"
             onClick={() => onMarkDone(plan.id)}
-            className="rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 text-xs h-8 px-4"
+            className="rounded-xl bg-foreground text-background text-xs h-8 px-4 hover:bg-foreground/90"
           >
             완료 처리
           </Button>

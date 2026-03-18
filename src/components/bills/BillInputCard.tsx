@@ -66,8 +66,8 @@ export function BillInputCard({
 
   return (
     <div className={cn(
-      'glass-elevated rounded-2xl p-4 press-scale transition-all',
-      hasAmount && 'ring-1 ring-primary/15',
+      'card-elevated p-5 press-scale transition-all',
+      hasAmount && 'ring-1 ring-foreground/10',
     )}>
       <div className="flex items-center gap-3">
         <div
@@ -84,8 +84,8 @@ export function BillInputCard({
         </div>
         {/* 입력 완료 체크 애니메이션 */}
         {showCheck && (
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 animate-in fade-in zoom-in duration-300">
-            <Check className="h-3.5 w-3.5 text-emerald-500" />
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground/10 animate-in fade-in zoom-in duration-300">
+            <Check className="h-3.5 w-3.5 text-foreground" />
           </div>
         )}
       </div>

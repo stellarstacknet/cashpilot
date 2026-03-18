@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Pencil, Trash2, AlertTriangle } from 'lucide-react';
+import { Plus, Pencil, Trash2, AlertTriangle, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,9 +20,8 @@ import { useCardStore } from '@/stores/useCardStore';
 import type { AccountPurpose } from '@/types';
 import { BANKS, ACCOUNT_PURPOSE_LABELS } from '@/utils/constants';
 import { formatWon, parseAmountInput, formatCurrency } from '@/utils/formatter';
+import { cn } from '@/lib/utils';
 
-// 계좌 관리 컴포넌트
-// 계좌 추가/수정/삭제, 삭제 시 연결 카드 비활성화 경고 포함
 export function AccountManager() {
   const { accounts, addAccount, updateAccount, deleteAccount } = useAccountStore();
   const cards = useCardStore((s) => s.cards);
@@ -31,6 +30,7 @@ export function AccountManager() {
   const [isOpen, setIsOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: '',
     bank: '',
@@ -38,7 +38,6 @@ export function AccountManager() {
     purpose: 'general' as AccountPurpose,
   });
 
-  // 삭제 대상 계좌에 연결된 카드 목록 조회
   const linkedCards = deleteTarget
     ? cards.filter((c) => c.linkedAccountId === deleteTarget)
     : [];
@@ -76,27 +75,26 @@ export function AccountManager() {
     resetForm();
   };
 
-  // 계좌 삭제 확인 처리
-  // 연결된 카드가 있으면 자동 비활성화
   const handleConfirmDelete = () => {
     if (!deleteTarget) return;
-
-    // 연결된 카드를 비활성화 처리
     for (const card of linkedCards) {
       updateCard(card.id, { isActive: false, linkedAccountId: '' });
     }
-
     deleteAccount(deleteTarget);
     setDeleteTarget(null);
   };
 
+  // 계좌에 연결된 카드 수 조회
+  const getLinkedCardCount = (accountId: string) => {
+    return cards.filter((c) => c.linkedAccountId === accountId).length;
+  };
+
   return (
-    <div className="space-y-2.5">
-      {/* 빈 상태 */}
+    <div className="space-y-3">
       {accounts.length === 0 && (
-        <div className="glass-elevated rounded-2xl py-14 text-center">
-          <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
-            <Plus className="h-7 w-7 text-primary" />
+        <div className="card-elevated rounded-2xl py-16 text-center">
+          <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/10">
+            <Plus className="h-7 w-7 text-foreground" />
           </div>
           <h3 className="font-display text-base font-semibold">계좌를 등록해주세요</h3>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -105,37 +103,84 @@ export function AccountManager() {
         </div>
       )}
 
-      {/* 계좌 목록 */}
-      {accounts.map((account) => (
-        <div key={account.id} className="glass-elevated rounded-2xl p-4 press-scale">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 font-display text-xs font-bold text-primary">
-                {account.bank.slice(0, 2)}
+      {accounts.map((account) => {
+        const isExpanded = expandedId === account.id;
+        const linkedCount = getLinkedCardCount(account.id);
+        const linkedCardNames = cards
+          .filter((c) => c.linkedAccountId === account.id)
+          .map((c) => c.name);
+
+        return (
+          <div key={account.id} className="card-elevated rounded-2xl overflow-hidden">
+            <div
+              className="px-5 pt-5 pb-4 cursor-pointer"
+              onClick={() => setExpandedId(isExpanded ? null : account.id)}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3.5">
+                  {/* 은행 뱃지 */}
+                  <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-foreground text-background font-display text-[15px] font-extrabold">
+                    {account.bank.slice(0, 2)}
+                  </div>
+                  <div>
+                    <p className="text-[15px] font-bold">{account.name}</p>
+                    <p className="text-[12px] text-muted-foreground mt-0.5">
+                      {account.bank} · {ACCOUNT_PURPOSE_LABELS[account.purpose]}
+                    </p>
+                  </div>
+                </div>
+
+                <ChevronRight className={cn(
+                  'h-4 w-4 text-muted-foreground/50 mt-1 transition-transform duration-200',
+                  isExpanded && 'rotate-90',
+                )} />
               </div>
-              <div>
-                <p className="text-sm font-semibold">{account.name}</p>
-                <p className="text-[11px] text-muted-foreground">
-                  {account.bank} · {ACCOUNT_PURPOSE_LABELS[account.purpose]} · {formatWon(account.balance)}
+
+              {/* 잔액 */}
+              <div className="mt-4 pt-3.5 border-t border-border/40">
+                <p className="text-[12px] text-muted-foreground">잔액</p>
+                <p className="font-display text-[22px] font-bold tabular-nums tracking-tight mt-1">
+                  {formatWon(account.balance)}
                 </p>
               </div>
             </div>
-            <div className="flex gap-0.5">
-              <button onClick={() => openEdit(account.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
-                <Pencil className="h-3.5 w-3.5" />
-              </button>
-              <button onClick={() => setDeleteTarget(account.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500 transition-colors">
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
+
+            {/* 확장 영역 */}
+            {isExpanded && (
+              <div className="border-t border-border/40 bg-muted/30">
+                {linkedCount > 0 && (
+                  <div className="px-5 py-3.5">
+                    <div className="flex justify-between text-[12px]">
+                      <span className="text-muted-foreground">연결된 카드</span>
+                      <span className="font-medium">{linkedCardNames.join(', ')}</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex border-t border-border/40">
+                  <button
+                    onClick={() => openEdit(account.id)}
+                    className="flex-1 py-3 text-[13px] font-semibold text-center border-r border-border/40 transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                  >
+                    <Pencil className="h-3.5 w-3.5" /> 수정
+                  </button>
+                  <button
+                    onClick={() => setDeleteTarget(account.id)}
+                    className="flex-1 py-3 text-[13px] font-semibold text-muted-foreground text-center transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> 삭제
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* 계좌 추가 버튼 */}
       <button
         onClick={openAdd}
-        className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 p-3.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+        className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 py-5 text-[13px] font-semibold text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
       >
         <Plus className="h-4 w-4" /> 계좌 추가
       </button>
@@ -201,7 +246,7 @@ export function AccountManager() {
         </DialogContent>
       </Dialog>
 
-      {/* 삭제 확인 다이얼로그 (연결 카드 경고 포함) */}
+      {/* 삭제 확인 다이얼로그 */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -209,7 +254,7 @@ export function AccountManager() {
             <AlertDialogDescription>
               {linkedCards.length > 0 ? (
                 <span className="flex flex-col gap-2">
-                  <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-medium">
+                  <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
                     <AlertTriangle className="h-4 w-4" />
                     이 계좌에 연결된 카드 {linkedCards.length}개가 비활성화됩니다.
                   </span>

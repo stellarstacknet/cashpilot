@@ -23,7 +23,6 @@ export function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const [notifStatus, setNotifStatus] = useState(getNotificationStatus);
 
-  // Supabase 동기화 처리
   const handleSync = async () => {
     setSyncing(true);
     try {
@@ -34,49 +33,48 @@ export function SettingsPage() {
     }
   };
 
-  // 알림 권한 요청
   const handleEnableNotifications = useCallback(async () => {
     const granted = await requestNotificationPermission();
     setNotifStatus(granted ? 'granted' : 'denied');
   }, []);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-7">
       <div>
-        <p className="text-[11px] font-semibold text-muted-foreground">SETTINGS</p>
-        <h1 className="font-display text-xl font-extrabold tracking-tight">설정</h1>
+        <p className="text-[12px] font-bold text-foreground tracking-wider uppercase">SETTINGS</p>
+        <h1 className="text-[22px] font-extrabold tracking-tight mt-0.5">설정</h1>
       </div>
 
       {/* 사용자 프로필 + 동기화 */}
       {user && (
-        <div className="glass-elevated rounded-2xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 font-display text-sm font-bold text-primary">
+        <div className="card-elevated p-5">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-foreground/10 font-display text-base font-bold text-foreground">
               {(user.user_metadata?.full_name || user.email || '?')[0].toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{user.user_metadata?.full_name || user.email}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+              <p className="text-[15px] font-bold truncate">{user.user_metadata?.full_name || user.email}</p>
+              <p className="text-[12px] text-muted-foreground truncate">{user.email}</p>
             </div>
           </div>
-          <div className="mt-3.5 flex gap-2">
+          <div className="mt-4 flex gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={handleSync}
               disabled={syncing}
-              className="flex-1 rounded-xl border-border/40 text-xs h-9"
+              className="flex-1 rounded-xl text-[13px] h-10"
             >
-              <RefreshCw className={cn('mr-1.5 h-3.5 w-3.5', syncing && 'animate-spin')} />
+              <RefreshCw className={cn('mr-1.5 h-4 w-4', syncing && 'animate-spin')} />
               동기화
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={signOut}
-              className="rounded-xl border-border/40 text-xs h-9"
+              className="rounded-xl text-[13px] h-10"
             >
-              <LogOut className="mr-1.5 h-3.5 w-3.5" />
+              <LogOut className="mr-1.5 h-4 w-4" />
               로그아웃
             </Button>
           </div>
@@ -84,17 +82,17 @@ export function SettingsPage() {
       )}
 
       {/* 테마 설정 */}
-      <div className="glass-elevated rounded-2xl p-4">
-        <p className="text-sm font-semibold mb-3">테마</p>
+      <div className="card-elevated p-5">
+        <p className="text-[15px] font-bold mb-4">테마</p>
         <div className="flex gap-2">
           {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
             <button
               key={value}
               onClick={() => setTheme(value)}
               className={cn(
-                'flex flex-1 flex-col items-center gap-1.5 rounded-xl p-3 text-xs font-medium transition-all duration-200',
+                'flex flex-1 flex-col items-center gap-2 rounded-2xl p-4 text-[13px] font-semibold transition-all duration-200',
                 theme === value
-                  ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
+                  ? 'bg-foreground/10 text-foreground ring-1 ring-foreground/15'
                   : 'bg-muted/50 text-muted-foreground hover:bg-muted',
               )}
             >
@@ -106,11 +104,11 @@ export function SettingsPage() {
       </div>
 
       {/* 알림 설정 */}
-      <div className="glass-elevated rounded-2xl p-4">
+      <div className="card-elevated p-5">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold">결제일 알림</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="text-[15px] font-bold">결제일 알림</p>
+            <p className="text-[12px] text-muted-foreground mt-0.5">
               {notifStatus === 'granted'
                 ? 'D-3, D-1에 알림을 받습니다'
                 : notifStatus === 'denied'
@@ -121,19 +119,19 @@ export function SettingsPage() {
             </p>
           </div>
           {notifStatus === 'granted' ? (
-            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="status-badge bg-muted text-foreground">
               <Bell className="h-3.5 w-3.5" /> 활성
             </span>
           ) : notifStatus === 'default' ? (
             <Button
               size="sm"
               onClick={handleEnableNotifications}
-              className="rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 text-xs h-8"
+              className="rounded-xl bg-foreground text-background text-[13px] h-9"
             >
               <Bell className="mr-1.5 h-3.5 w-3.5" /> 허용
             </Button>
           ) : notifStatus === 'denied' ? (
-            <span className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+            <span className="status-badge bg-muted text-muted-foreground">
               <BellOff className="h-3.5 w-3.5" /> 차단됨
             </span>
           ) : null}
@@ -141,11 +139,11 @@ export function SettingsPage() {
       </div>
 
       {/* PWA 설치 */}
-      <div className="glass-elevated rounded-2xl p-4">
+      <div className="card-elevated p-5">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold">앱 설치</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="text-[15px] font-bold">앱 설치</p>
+            <p className="text-[12px] text-muted-foreground mt-0.5">
               {isInstalled
                 ? '이미 설치되어 있습니다'
                 : isIOS
@@ -157,12 +155,12 @@ export function SettingsPage() {
             <Button
               size="sm"
               onClick={install}
-              className="rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 text-xs h-8"
+              className="rounded-xl bg-foreground text-background text-[13px] h-9"
             >
               <Download className="mr-1.5 h-3.5 w-3.5" />설치
             </Button>
           ) : isInstalled ? (
-            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="status-badge bg-muted text-foreground">
               <Check className="h-3.5 w-3.5" />설치됨
             </span>
           ) : null}
@@ -171,7 +169,7 @@ export function SettingsPage() {
 
       {/* 데이터 관리 */}
       <section>
-        <p className="section-label mb-2.5">데이터</p>
+        <h2 className="section-label mb-4">데이터</h2>
         <DataManagement />
       </section>
     </div>

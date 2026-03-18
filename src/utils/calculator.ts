@@ -7,6 +7,7 @@ import type {
   TimelineEvent,
 } from '@/types';
 import { generateId } from './formatter';
+import { adjustToBusinessDay } from './holidays';
 
 /**
  * 이체 플랜 자동 계산 알고리즘 (계좌 잔액 기반)
@@ -23,6 +24,7 @@ export function calculateTransferPlan(
   bills: MonthlyBill[],
   year: number,
   month: number,
+  holidays: string[] = [],
 ): TransferCalculationResult {
   const warnings: string[] = [];
   const transferPlans: TransferPlan[] = [];
@@ -96,7 +98,7 @@ export function calculateTransferPlan(
       if (available <= 0) continue;
 
       const transferAmount = Math.min(available, remaining);
-      const dueDay = getEarliestDueDay(deficit.accountId, accountCardMap);
+      const dueDay = getEarliestDueDay(deficit.accountId, accountCardMap, year, month, holidays);
 
       const fromAccount = accounts.find((a) => a.id === surplusId);
       const toAccount = accounts.find((a) => a.id === deficit.accountId);
@@ -150,19 +152,24 @@ function getMaxOverdueRate(
 function getEarliestDueDay(
   accountId: string,
   cardMap: Record<string, { card: Card; bill: MonthlyBill }[]>,
+  year: number,
+  month: number,
+  holidays: string[],
 ): number {
   const entries = cardMap[accountId] || [];
   if (entries.length === 0) return 28;
-  return Math.min(28, Math.max(1, Math.min(...entries.map((e) => e.card.paymentDay))));
+  const rawDay = Math.min(28, Math.max(1, Math.min(...entries.map((e) => e.card.paymentDay))));
+  return adjustToBusinessDay(year, month, rawDay, holidays);
 }
 
-// 타임라인 이벤트 생성 (청구 이벤트만)
+// 타임라인 이벤트 생성 (결제일 영업일 보정 적용)
 export function generateTimelineEvents(
   accounts: Account[],
   cards: Card[],
   bills: MonthlyBill[],
   year: number,
   month: number,
+  holidays: string[] = [],
 ): TimelineEvent[] {
   const events: TimelineEvent[] = [];
   const activeCards = cards.filter((c) => c.isActive);
@@ -180,11 +187,14 @@ export function generateTimelineEvents(
     const account = accounts.find((a) => a.id === card.linkedAccountId);
     if (!account) continue;
 
+    const adjustedDay = adjustToBusinessDay(year, month, card.paymentDay, holidays);
+
     balances[card.linkedAccountId] = (balances[card.linkedAccountId] || 0) - bill.amount;
     const balanceAfter = balances[card.linkedAccountId];
 
     events.push({
-      day: card.paymentDay,
+      day: adjustedDay,
+      ...(adjustedDay !== card.paymentDay ? { originalDay: card.paymentDay } : {}),
       type: 'bill',
       label: card.name,
       amount: bill.amount,

@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 270 15% 96%;
-    --foreground: 270 30% 6%;
-    --card: 270 15% 100%;
-    --card-foreground: 270 30% 6%;
-    --popover: 270 15% 100%;
-    --popover-foreground: 270 30% 6%;
-    --primary: 268 70% 42%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+    --primary: 0 0% 9%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 270 12% 91%;
-    --secondary-foreground: 270 30% 6%;
-    --muted: 270 10% 89%;
-    --muted-foreground: 270 10% 42%;
-    --accent: 270 12% 91%;
-    --accent-foreground: 270 30% 6%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 0% 94%;
+    --accent-foreground: 0 0% 9%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 270 8% 87%;
-    --input: 270 8% 87%;
-    --ring: 268 70% 42%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 9%;
     --radius: 1rem;
   }
 
   .dark {
-    --background: 270 25% 4%;
-    --foreground: 270 10% 92%;
-    --card: 270 20% 8%;
-    --card-foreground: 270 10% 92%;
-    --popover: 270 20% 8%;
-    --popover-foreground: 270 10% 92%;
-    --primary: 268 65% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 270 15% 12%;
-    --secondary-foreground: 270 10% 92%;
-    --muted: 270 15% 12%;
-    --muted-foreground: 270 8% 50%;
-    --accent: 270 15% 12%;
-    --accent-foreground: 270 10% 92%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 270 10% 92%;
-    --border: 270 12% 13%;
-    --input: 270 12% 13%;
-    --ring: 268 65% 55%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 93%;
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 93%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 93%;
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 13%;
+    --secondary-foreground: 0 0% 93%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 0 0% 13%;
+    --accent-foreground: 0 0% 93%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 96%;
   }
 }
 
@@ -56,12 +56,12 @@
   body {
     @apply bg-background text-foreground antialiased;
     margin: 0;
-    font-family: 'Outfit', 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: 'Pretendard Variable', 'Outfit', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   }
 }
 
 .font-display {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Outfit', 'Pretendard Variable', sans-serif;
 }
 
 html, body, #root {
@@ -85,85 +85,88 @@ html, body, #root {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ── Glass card ── */
-.glass {
-  background: hsla(270, 20%, 100%, 0.55);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid hsla(270, 20%, 100%, 0.35);
+/* ── 카드 (클린 엘리베이션) ── */
+.card-elevated {
+  background: hsl(var(--card));
+  border-radius: 20px;
+  border: 1px solid hsl(var(--border));
+  box-shadow:
+    0 1px 2px hsla(0, 0%, 0%, 0.03),
+    0 4px 16px hsla(0, 0%, 0%, 0.04);
 }
-.dark .glass {
-  background: hsla(270, 20%, 12%, 0.6);
-  border-color: hsla(270, 15%, 100%, 0.06);
+.dark .card-elevated {
+  border-color: hsla(0, 0%, 100%, 0.06);
+  box-shadow:
+    0 1px 3px hsla(0, 0%, 0%, 0.4),
+    0 6px 20px hsla(0, 0%, 0%, 0.3);
 }
 
-/* ── Glass card variant: elevated ── */
+/* ── 글래스 (하위 호환) ── */
+.glass {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 20px;
+}
 .glass-elevated {
-  background: hsla(270, 20%, 100%, 0.72);
-  backdrop-filter: blur(24px) saturate(1.5);
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  border: 1px solid hsla(270, 20%, 100%, 0.5);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 20px;
   box-shadow:
-    0 2px 8px hsla(268, 50%, 25%, 0.05),
-    0 12px 40px hsla(268, 50%, 25%, 0.07);
+    0 1px 2px hsla(0, 0%, 0%, 0.03),
+    0 4px 16px hsla(0, 0%, 0%, 0.04);
 }
 .dark .glass-elevated {
-  background: hsla(270, 20%, 10%, 0.72);
-  border-color: hsla(270, 15%, 100%, 0.07);
+  border-color: hsla(0, 0%, 100%, 0.06);
   box-shadow:
-    0 2px 8px hsla(270, 30%, 5%, 0.2),
-    0 12px 40px hsla(270, 30%, 5%, 0.3);
+    0 1px 3px hsla(0, 0%, 0%, 0.4),
+    0 6px 20px hsla(0, 0%, 0%, 0.3);
 }
 
-/* ── Mesh gradient background ── */
-.mesh-gradient {
-  background:
-    radial-gradient(ellipse at 15% 0%, hsla(268, 60%, 50%, 0.10) 0%, transparent 50%),
-    radial-gradient(ellipse at 85% 15%, hsla(280, 50%, 45%, 0.07) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, hsla(255, 60%, 50%, 0.05) 0%, transparent 50%),
-    hsl(var(--background));
-}
-.dark .mesh-gradient {
-  background:
-    radial-gradient(ellipse at 15% 0%, hsla(268, 60%, 35%, 0.10) 0%, transparent 50%),
-    radial-gradient(ellipse at 85% 15%, hsla(280, 50%, 30%, 0.07) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, hsla(255, 60%, 30%, 0.05) 0%, transparent 50%),
-    hsl(var(--background));
-}
-
-/* ── Hero gradient (balance card) ── */
+/* ── 히어로 카드 (블랙 그라데이션) ── */
 .hero-gradient {
-  background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 30%, #6d28d9 60%, #7c3aed 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #171717 40%, #262626 100%);
   position: relative;
   overflow: hidden;
+}
+.dark .hero-gradient {
+  background: linear-gradient(135deg, #fafafa 0%, #e5e5e5 40%, #d4d4d4 100%);
 }
 .hero-gradient::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 15% 85%, hsla(270, 80%, 65%, 0.25) 0%, transparent 40%),
-    radial-gradient(circle at 85% 15%, hsla(250, 70%, 55%, 0.2) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, hsla(0, 0%, 100%, 0.04) 0%, transparent 60%);
+    radial-gradient(circle at 15% 85%, hsla(0, 0%, 100%, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 85% 15%, hsla(0, 0%, 100%, 0.04) 0%, transparent 40%);
   pointer-events: none;
 }
+.dark .hero-gradient::before {
+  background:
+    radial-gradient(circle at 15% 85%, hsla(0, 0%, 0%, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 85% 15%, hsla(0, 0%, 0%, 0.04) 0%, transparent 40%);
+}
 
-/* ── Floating nav ── */
+/* ── 메쉬 그라데이션 배경 ── */
+.mesh-gradient {
+  background: hsl(var(--background));
+}
+
+/* ── 하단 네비게이션 바 ── */
 .floating-nav {
-  background: hsla(270, 20%, 100%, 0.65);
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  border: 1px solid hsla(270, 20%, 100%, 0.45);
+  background: hsla(0, 0%, 100%, 0.88);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid hsla(0, 0%, 0%, 0.06);
   box-shadow:
-    0 4px 16px hsla(268, 40%, 20%, 0.07),
-    0 1px 3px hsla(268, 40%, 20%, 0.04);
+    0 4px 16px hsla(0, 0%, 0%, 0.06),
+    0 1px 3px hsla(0, 0%, 0%, 0.03);
 }
 .dark .floating-nav {
-  background: hsla(270, 20%, 10%, 0.7);
-  border-color: hsla(270, 15%, 100%, 0.08);
+  background: hsla(0, 0%, 9%, 0.88);
+  border-color: hsla(0, 0%, 100%, 0.06);
   box-shadow:
-    0 4px 16px hsla(270, 30%, 5%, 0.35),
-    0 1px 3px hsla(270, 30%, 5%, 0.2);
+    0 4px 20px hsla(0, 0%, 0%, 0.5),
+    0 1px 3px hsla(0, 0%, 0%, 0.3);
 }
 
 /* ── Page transition ── */
@@ -208,9 +211,16 @@ html, body, #root {
 
 /* ── Section label ── */
 .section-label {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: hsl(var(--foreground));
+}
+
+/* ── Section sub-label ── */
+.section-sub {
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-weight: 500;
   color: hsl(var(--muted-foreground));
 }
 
@@ -219,15 +229,15 @@ html, body, #root {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: hsl(var(--primary));
+  background: hsl(var(--foreground));
   display: inline-block;
 }
 
 /* ── Amount color helpers ── */
-.amount-positive { color: #10b981; }
-.amount-negative { color: #f43f5e; }
-.dark .amount-positive { color: #34d399; }
-.dark .amount-negative { color: #fb7185; }
+.amount-positive { color: hsl(var(--foreground)); }
+.amount-negative { color: hsl(var(--muted-foreground)); }
+.dark .amount-positive { color: hsl(var(--foreground)); }
+.dark .amount-negative { color: hsl(var(--muted-foreground)); }
 
 /* ── 다크모드 전환 애니메이션 ── */
 html {
@@ -274,4 +284,49 @@ html *::after {
 }
 .slide-right {
   animation: slide-in-right 0.25s ease-out;
+}
+
+/* ── 뱅크 아이콘 컬러 ── */
+.bank-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+/* ── 프로그레스 바 ── */
+.progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: hsl(var(--muted));
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ── 숫자 카운트업 애니메이션 ── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-count {
+  animation: count-up 0.4s ease-out;
+}
+
+/* ── 뱃지 스타일 ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }

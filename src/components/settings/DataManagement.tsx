@@ -89,13 +89,13 @@ export function DataManagement() {
 
   return (
     <div className="space-y-2.5">
-      <div className="glass-elevated rounded-2xl divide-y divide-border/30">
+      <div className="card-elevated rounded-2xl divide-y divide-border/30">
         <button
           onClick={handleExport}
           className="flex w-full items-center gap-3 p-4 text-left text-sm font-medium transition-colors hover:bg-muted/30 first:rounded-t-2xl"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/10">
-            <Download className="h-4 w-4 text-blue-500" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10">
+            <Download className="h-4 w-4 text-foreground" />
           </div>
           <div>
             <p>데이터 내보내기</p>
@@ -107,8 +107,8 @@ export function DataManagement() {
           onClick={() => fileInputRef.current?.click()}
           className="flex w-full items-center gap-3 p-4 text-left text-sm font-medium transition-colors hover:bg-muted/30"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10">
-            <Upload className="h-4 w-4 text-emerald-500" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10">
+            <Upload className="h-4 w-4 text-foreground" />
           </div>
           <div>
             <p>데이터 가져오기</p>
@@ -125,12 +125,12 @@ export function DataManagement() {
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <button className="flex w-full items-center gap-3 p-4 text-left text-sm font-medium transition-colors hover:bg-rose-500/5 last:rounded-b-2xl">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/10">
-                <RotateCcw className="h-4 w-4 text-rose-500" />
+            <button className="flex w-full items-center gap-3 p-4 text-left text-sm font-medium transition-colors hover:bg-muted/30 last:rounded-b-2xl">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10">
+                <RotateCcw className="h-4 w-4 text-foreground" />
               </div>
               <div>
-                <p className="text-rose-600 dark:text-rose-400">모든 데이터 초기화</p>
+                <p className="text-foreground">모든 데이터 초기화</p>
                 <p className="text-[11px] text-muted-foreground font-normal">되돌릴 수 없습니다</p>
               </div>
             </button>

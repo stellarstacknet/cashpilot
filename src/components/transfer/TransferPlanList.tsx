@@ -32,7 +32,7 @@ export function TransferPlanList({ plans, year, month }: TransferPlanListProps) 
   // 이체 플랜이 없는 경우 빈 상태 표시
   if (plans.length === 0) {
     return (
-      <div className="glass rounded-2xl p-10 text-center">
+      <div className="card-elevated p-10 text-center">
         <ArrowRightLeft className="mx-auto mb-3 h-8 w-8 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground">
           이체가 필요하지 않습니다.
@@ -61,7 +61,7 @@ export function TransferPlanList({ plans, year, month }: TransferPlanListProps) 
       ))}
 
       {/* 대기 중인 이체 요약 */}
-      <div className="glass-elevated rounded-2xl p-4">
+      <div className="card-elevated p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[11px] text-muted-foreground">대기 중</p>
