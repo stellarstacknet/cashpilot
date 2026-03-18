@@ -68,7 +68,7 @@ export function SettingsPage() {
               className="flex-1 bg-foreground text-background hover:bg-foreground/90 text-[13px] h-10"
             >
               <RefreshCw className={cn('mr-1.5 h-4 w-4', syncing && 'animate-spin')} />
-              동기화
+              서버에서 불러오기
             </Button>
             <Button
               size="sm"

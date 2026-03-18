@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { LoginPage } from '@/components/auth/LoginPage';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { loadFromSupabase } from '@/lib/sync';
 import { startNotificationScheduler } from '@/utils/notifications';
 
 function App() {
@@ -15,13 +14,6 @@ function App() {
   useEffect(() => {
     initialize();
   }, [initialize]);
-
-  // 로그인 후 Supabase에서 데이터 불러오기
-  useEffect(() => {
-    if (user) {
-      loadFromSupabase();
-    }
-  }, [user]);
 
   // 결제일 알림 스케줄러 시작
   useEffect(() => {
