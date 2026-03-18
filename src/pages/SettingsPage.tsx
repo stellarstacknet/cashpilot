@@ -11,14 +11,26 @@ import { cn } from '@/lib/utils';
 export function SettingsPage() {
   const { user, signOut } = useAuthStore();
   const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const { canInstall, isInstalled, isIOS, install } = usePWAInstall();
   const [notifStatus, setNotifStatus] = useState(getNotificationStatus);
 
   const handleSync = async () => {
     setSyncing(true);
+    setSyncMessage(null);
     try {
-      await pushToSupabase();
-      await pullFromSupabase();
+      const pushResult = await pushToSupabase();
+      if (!pushResult.success) {
+        setSyncMessage({ type: 'error', text: pushResult.error });
+        return;
+      }
+      const pullResult = await pullFromSupabase();
+      if (!pullResult.success) {
+        setSyncMessage({ type: 'error', text: pullResult.error });
+        return;
+      }
+      setSyncMessage({ type: 'success', text: '동기화 완료' });
+      setTimeout(() => setSyncMessage(null), 3000);
     } finally {
       setSyncing(false);
     }
@@ -43,6 +55,14 @@ export function SettingsPage() {
               <p className="text-[12px] text-muted-foreground truncate">{user.email}</p>
             </div>
           </div>
+          {syncMessage && (
+            <p className={cn(
+              'mt-3 text-[12px] font-semibold text-center',
+              syncMessage.type === 'success' ? 'text-[#3a9bd5]' : 'text-[#e53535]',
+            )}>
+              {syncMessage.text}
+            </p>
+          )}
           <div className="mt-4 flex gap-2">
             <Button
               size="sm"

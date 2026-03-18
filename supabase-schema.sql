@@ -25,6 +25,23 @@ create table public.cards (
   overdue_rate numeric(5,2) not null default 19.9,
   color text not null default '#3B82F6',
   is_active boolean not null default true,
+  sort_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- 고정비 테이블
+create table public.fixed_expenses (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade not null,
+  name text not null,
+  amount bigint not null default 0,
+  category text not null default 'subscription',
+  pay_method text not null default 'card',
+  card_id uuid references public.cards(id) on delete set null,
+  account_id uuid references public.accounts(id) on delete set null,
+  pay_day int not null default 1,
+  sort_order int not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -60,6 +77,7 @@ create table public.snapshots (
 -- RLS 정책: 사용자 본인 데이터만 접근 가능
 alter table public.accounts enable row level security;
 alter table public.cards enable row level security;
+alter table public.fixed_expenses enable row level security;
 alter table public.bills enable row level security;
 alter table public.snapshots enable row level security;
 
@@ -67,6 +85,9 @@ create policy "Users can manage own accounts" on public.accounts
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy "Users can manage own cards" on public.cards
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create policy "Users can manage own fixed_expenses" on public.fixed_expenses
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy "Users can manage own bills" on public.bills
@@ -91,4 +112,7 @@ create trigger cards_updated_at before update on public.cards
   for each row execute function public.handle_updated_at();
 
 create trigger bills_updated_at before update on public.bills
+  for each row execute function public.handle_updated_at();
+
+create trigger fixed_expenses_updated_at before update on public.fixed_expenses
   for each row execute function public.handle_updated_at();
