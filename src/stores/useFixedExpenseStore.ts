@@ -1,7 +1,10 @@
+// 고정비 관리 Zustand store
+// localStorage에 영속화 + Supabase 실시간 저장
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { FixedExpense, FixedExpensePayMethod, FixedExpenseCategory } from '@/types';
 import { generateId, nowISO } from '@/utils/formatter';
+import { dbSaveFixedExpense, dbSaveFixedExpenses, dbDeleteFixedExpense } from '@/lib/db';
 
 interface FixedExpenseStore {
   expenses: FixedExpense[];
@@ -14,36 +17,42 @@ interface FixedExpenseStore {
 
 export const useFixedExpenseStore = create<FixedExpenseStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       expenses: [],
 
-      addExpense: (data) =>
-        set((state) => ({
-          expenses: [
-            ...state.expenses,
-            {
-              id: generateId(),
-              ...data,
-              sortOrder: state.expenses.length,
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-            },
-          ],
-        })),
+      addExpense: (data) => {
+        const expense: FixedExpense = {
+          id: generateId(),
+          ...data,
+          sortOrder: get().expenses.length,
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+        };
+        set((state) => ({ expenses: [...state.expenses, expense] }));
+        dbSaveFixedExpense(expense);
+      },
 
-      updateExpense: (id, data) =>
+      updateExpense: (id, data) => {
         set((state) => ({
           expenses: state.expenses.map((e) =>
             e.id === id ? { ...e, ...data, updatedAt: nowISO() } : e,
           ),
-        })),
+        }));
+        const updated = get().expenses.find((e) => e.id === id);
+        if (updated) dbSaveFixedExpense(updated);
+      },
 
-      deleteExpense: (id) =>
+      deleteExpense: (id) => {
         set((state) => ({
           expenses: state.expenses.filter((e) => e.id !== id),
-        })),
+        }));
+        dbDeleteFixedExpense(id);
+      },
 
-      reorder: (expenses) => set({ expenses }),
+      reorder: (expenses) => {
+        set({ expenses });
+        dbSaveFixedExpenses(expenses);
+      },
 
       reset: () => set({ expenses: [] }),
     }),

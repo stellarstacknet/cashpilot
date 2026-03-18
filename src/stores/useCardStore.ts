@@ -1,9 +1,10 @@
 // 카드 관리 Zustand store
-// localStorage에 영속화, 카드 CRUD + 활성 토글 + 정렬 기능
+// localStorage에 영속화 + Supabase 실시간 저장
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Card } from '@/types';
 import { generateId, nowISO } from '@/utils/formatter';
+import { dbSaveCard, dbSaveCards, dbDeleteCard } from '@/lib/db';
 
 interface CardStore {
   cards: Card[];
@@ -17,50 +18,53 @@ interface CardStore {
 
 export const useCardStore = create<CardStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       cards: [],
 
-      // 카드 추가 (sortOrder는 자동 부여)
-      addCard: (data) =>
-        set((state) => ({
-          cards: [
-            ...state.cards,
-            {
-              ...data,
-              id: generateId(),
-              sortOrder: state.cards.length,
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-            },
-          ],
-        })),
+      addCard: (data) => {
+        const card: Card = {
+          ...data,
+          id: generateId(),
+          sortOrder: get().cards.length,
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+        };
+        set((state) => ({ cards: [...state.cards, card] }));
+        dbSaveCard(card);
+      },
 
-      // 카드 정보 부분 업데이트
-      updateCard: (id, data) =>
+      updateCard: (id, data) => {
         set((state) => ({
           cards: state.cards.map((c) =>
             c.id === id ? { ...c, ...data, updatedAt: nowISO() } : c,
           ),
-        })),
+        }));
+        const updated = get().cards.find((c) => c.id === id);
+        if (updated) dbSaveCard(updated);
+      },
 
-      // 카드 삭제
-      deleteCard: (id) =>
+      deleteCard: (id) => {
         set((state) => ({
           cards: state.cards.filter((c) => c.id !== id),
-        })),
+        }));
+        dbDeleteCard(id);
+      },
 
-      // 활성/비활성 토글
-      toggleActive: (id) =>
+      toggleActive: (id) => {
         set((state) => ({
           cards: state.cards.map((c) =>
             c.id === id ? { ...c, isActive: !c.isActive, updatedAt: nowISO() } : c,
           ),
-        })),
+        }));
+        const updated = get().cards.find((c) => c.id === id);
+        if (updated) dbSaveCard(updated);
+      },
 
-      // 카드 순서 변경
-      reorder: (cards) => set({ cards }),
+      reorder: (cards) => {
+        set({ cards });
+        dbSaveCards(cards);
+      },
 
-      // 전체 초기화
       reset: () => set({ cards: [] }),
     }),
     { name: 'cashpilot-cards' },

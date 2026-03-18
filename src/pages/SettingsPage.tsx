@@ -2,7 +2,7 @@ import { Download, LogOut, RefreshCw, Check, Bell, BellOff } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { DataManagement } from '@/components/settings/DataManagement';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { pullFromSupabase, pushToSupabase } from '@/lib/sync';
+import { loadFromSupabase } from '@/lib/sync';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { getNotificationStatus, requestNotificationPermission } from '@/utils/notifications';
 import { useState, useCallback } from 'react';
@@ -19,20 +19,13 @@ export function SettingsPage() {
     setSyncing(true);
     setSyncMessage(null);
     try {
-      const pushResult = await pushToSupabase();
-      if (!pushResult.success) {
-        setSyncMessage({ type: 'error', text: pushResult.error });
-        setSyncing(false);
-        return;
+      const result = await loadFromSupabase();
+      if (!result.success) {
+        setSyncMessage({ type: 'error', text: result.error });
+      } else {
+        setSyncMessage({ type: 'success', text: '서버에서 불러왔어요' });
+        setTimeout(() => setSyncMessage(null), 3000);
       }
-      const pullResult = await pullFromSupabase();
-      if (!pullResult.success) {
-        setSyncMessage({ type: 'error', text: pullResult.error });
-        setSyncing(false);
-        return;
-      }
-      setSyncMessage({ type: 'success', text: '동기화 완료' });
-      setTimeout(() => setSyncMessage(null), 3000);
     } catch (e) {
       setSyncMessage({ type: 'error', text: e instanceof Error ? e.message : '알 수 없는 오류' });
     } finally {

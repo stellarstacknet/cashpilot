@@ -1,11 +1,11 @@
 // CashPilot 최상위 앱 컴포넌트
 // 인증 확인 → 로그인/메인 화면 분기
-// Supabase 동기화 및 결제일 알림 스케줄러 초기화
+// Supabase 데이터 로드 및 결제일 알림 스케줄러 초기화
 import { useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { LoginPage } from '@/components/auth/LoginPage';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { pushToSupabase, pullFromSupabase, setupAutoSync } from '@/lib/sync';
+import { loadFromSupabase } from '@/lib/sync';
 import { startNotificationScheduler } from '@/utils/notifications';
 
 function App() {
@@ -16,14 +16,10 @@ function App() {
     initialize();
   }, [initialize]);
 
-  // 로그인 후 Supabase 데이터 동기화 + 자동 동기화 설정
+  // 로그인 후 Supabase에서 데이터 불러오기
   useEffect(() => {
     if (user) {
-      pushToSupabase().then(() => {
-        return pullFromSupabase();
-      }).then(() => {
-        setupAutoSync();
-      });
+      loadFromSupabase();
     }
   }, [user]);
 

@@ -1,9 +1,10 @@
 // 월별 청구서 관리 Zustand store
-// localStorage에 영속화, 청구서 생성/업데이트/납부 토글
+// localStorage에 영속화 + Supabase 실시간 저장
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { MonthlyBill } from '@/types';
 import { generateId, nowISO } from '@/utils/formatter';
+import { dbSaveBill } from '@/lib/db';
 
 interface BillStore {
   bills: MonthlyBill[];
@@ -19,57 +20,51 @@ export const useBillStore = create<BillStore>()(
     (set, get) => ({
       bills: [],
 
-      // 청구액 설정 (동일 카드/월 조합이 있으면 업데이트, 없으면 생성)
-      setBill: (cardId, year, month, amount) =>
-        set((state) => {
-          const existing = state.bills.find(
-            (b) => b.cardId === cardId && b.year === year && b.month === month,
-          );
+      setBill: (cardId, year, month, amount) => {
+        const existing = get().bills.find(
+          (b) => b.cardId === cardId && b.year === year && b.month === month,
+        );
 
-          if (existing) {
-            return {
-              bills: state.bills.map((b) =>
-                b.id === existing.id ? { ...b, amount, updatedAt: nowISO() } : b,
-              ),
-            };
-          }
-
-          return {
-            bills: [
-              ...state.bills,
-              {
-                id: generateId(),
-                cardId,
-                year,
-                month,
-                amount,
-                isPaid: false,
-                createdAt: nowISO(),
-                updatedAt: nowISO(),
-              },
-            ],
+        if (existing) {
+          const updated = { ...existing, amount, updatedAt: nowISO() };
+          set((state) => ({
+            bills: state.bills.map((b) => (b.id === existing.id ? updated : b)),
+          }));
+          dbSaveBill(updated);
+        } else {
+          const bill: MonthlyBill = {
+            id: generateId(),
+            cardId,
+            year,
+            month,
+            amount,
+            isPaid: false,
+            createdAt: nowISO(),
+            updatedAt: nowISO(),
           };
-        }),
+          set((state) => ({ bills: [...state.bills, bill] }));
+          dbSaveBill(bill);
+        }
+      },
 
-      // 납부 상태 토글
-      togglePaid: (id) =>
+      togglePaid: (id) => {
         set((state) => ({
           bills: state.bills.map((b) =>
             b.id === id ? { ...b, isPaid: !b.isPaid, updatedAt: nowISO() } : b,
           ),
-        })),
+        }));
+        const updated = get().bills.find((b) => b.id === id);
+        if (updated) dbSaveBill(updated);
+      },
 
-      // 특정 월의 모든 청구서 조회
       getBillsForMonth: (year, month) =>
         get().bills.filter((b) => b.year === year && b.month === month),
 
-      // 특정 카드의 특정 월 청구서 조회
       getBillForCard: (cardId, year, month) =>
         get().bills.find(
           (b) => b.cardId === cardId && b.year === year && b.month === month,
         ),
 
-      // 전체 초기화
       reset: () => set({ bills: [] }),
     }),
     { name: 'cashpilot-bills' },

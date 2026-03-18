@@ -1,9 +1,10 @@
 // 계좌 관리 Zustand store
-// localStorage에 영속화, 계좌 CRUD + 잔액 업데이트 + 정렬 기능
+// localStorage에 영속화 + Supabase 실시간 저장
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Account, AccountPurpose } from '@/types';
 import { generateId, nowISO } from '@/utils/formatter';
+import { dbSaveAccount, dbSaveAccounts, dbDeleteAccount } from '@/lib/db';
 
 interface AccountStore {
   accounts: Account[];
@@ -17,50 +18,53 @@ interface AccountStore {
 
 export const useAccountStore = create<AccountStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       accounts: [],
 
-      // 계좌 추가 (sortOrder는 자동 부여)
-      addAccount: (data) =>
-        set((state) => ({
-          accounts: [
-            ...state.accounts,
-            {
-              id: generateId(),
-              ...data,
-              sortOrder: state.accounts.length,
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-            },
-          ],
-        })),
+      addAccount: (data) => {
+        const account: Account = {
+          id: generateId(),
+          ...data,
+          sortOrder: get().accounts.length,
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+        };
+        set((state) => ({ accounts: [...state.accounts, account] }));
+        dbSaveAccount(account);
+      },
 
-      // 계좌 정보 부분 업데이트
-      updateAccount: (id, data) =>
+      updateAccount: (id, data) => {
         set((state) => ({
           accounts: state.accounts.map((a) =>
             a.id === id ? { ...a, ...data, updatedAt: nowISO() } : a,
           ),
-        })),
+        }));
+        const updated = get().accounts.find((a) => a.id === id);
+        if (updated) dbSaveAccount(updated);
+      },
 
-      // 계좌 삭제 (연결 카드 처리는 AccountManager 컴포넌트에서 수행)
-      deleteAccount: (id) =>
+      deleteAccount: (id) => {
         set((state) => ({
           accounts: state.accounts.filter((a) => a.id !== id),
-        })),
+        }));
+        dbDeleteAccount(id);
+      },
 
-      // 잔액만 빠르게 업데이트
-      updateBalance: (id, balance) =>
+      updateBalance: (id, balance) => {
         set((state) => ({
           accounts: state.accounts.map((a) =>
             a.id === id ? { ...a, balance, updatedAt: nowISO() } : a,
           ),
-        })),
+        }));
+        const updated = get().accounts.find((a) => a.id === id);
+        if (updated) dbSaveAccount(updated);
+      },
 
-      // 계좌 순서 변경
-      reorder: (accounts) => set({ accounts }),
+      reorder: (accounts) => {
+        set({ accounts });
+        dbSaveAccounts(accounts);
+      },
 
-      // 전체 초기화
       reset: () => set({ accounts: [] }),
     }),
     { name: 'cashpilot-accounts' },
