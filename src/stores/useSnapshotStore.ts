@@ -1,3 +1,6 @@
+// 월별 스냅샷 Zustand store
+// 현재 UI에서 직접 사용하지 않으나, 데이터 import/export 호환을 위해 유지
+// 향후 히스토리/트렌드 분석 기능 추가 시 활용
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { MonthlySnapshot, MonthlyBill } from '@/types';
@@ -23,9 +26,9 @@ export const useSnapshotStore = create<SnapshotStore>()(
     (set, get) => ({
       snapshots: [],
 
+      // 스냅샷 저장 (같은 월이면 업데이트)
       saveSnapshot: (data) =>
         set((state) => {
-          // 같은 월 스냅샷이 이미 있으면 업데이트
           const existing = state.snapshots.find(
             (s) => s.year === data.year && s.month === data.month,
           );
@@ -50,9 +53,11 @@ export const useSnapshotStore = create<SnapshotStore>()(
           };
         }),
 
+      // 특정 월 스냅샷 조회
       getSnapshot: (year, month) =>
         get().snapshots.find((s) => s.year === year && s.month === month),
 
+      // 최근 N개월 스냅샷 조회 (시간순 정렬)
       getSnapshotsRange: (months) => {
         const now = new Date();
         const snapshots = get().snapshots.filter((s) => {

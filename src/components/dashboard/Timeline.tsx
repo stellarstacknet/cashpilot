@@ -1,3 +1,5 @@
+// 결제 타임라인 컴포넌트
+// 결제일 순으로 이벤트 표시, 잔액 부족 시 배경 강조
 import type { TimelineEvent } from '@/types';
 import { formatCurrency } from '@/utils/formatter';
 import { cn } from '@/lib/utils';

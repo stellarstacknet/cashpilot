@@ -1,6 +1,7 @@
+// 데이터 관리 컴포넌트
+// JSON 내보내기(백업), 가져오기(복원), 전체 초기화 기능
 import { useRef } from 'react';
 import { Download, Upload, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +18,7 @@ import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
 import { useIncomeStore } from '@/stores/useIncomeStore';
 import { useSnapshotStore } from '@/stores/useSnapshotStore';
+import { useTransferStatusStore } from '@/stores/useTransferStatusStore';
 import { exportData, importData } from '@/utils/dataExport';
 import { APP_VERSION } from '@/utils/constants';
 
@@ -75,12 +77,14 @@ export function DataManagement() {
     }
   };
 
+  // 모든 데이터 초기화 (이체 상태 포함)
   const handleReset = () => {
     accountStore.reset();
     cardStore.reset();
     billStore.reset();
     incomeStore.reset();
     snapshotStore.reset();
+    useTransferStatusStore.getState().reset();
   };
 
   return (

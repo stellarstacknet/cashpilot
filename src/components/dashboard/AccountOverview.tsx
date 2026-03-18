@@ -1,3 +1,5 @@
+// 계좌별 현황 컴포넌트
+// 각 계좌의 현재 잔액, 연결 카드 청구액, 결제 후 잔액 표시
 import { useMemo } from 'react';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';

@@ -1,3 +1,5 @@
+// 청구서 입력 페이지
+// 활성 카드별 월 청구액 입력 인터페이스
 import { MonthSelector } from '@/components/layout/MonthSelector';
 import { BillInputList } from '@/components/bills/BillInputList';
 

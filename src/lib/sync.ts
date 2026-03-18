@@ -1,21 +1,27 @@
+// Supabase 데이터 동기화 모듈
+// 계좌/카드/청구서를 Supabase와 양방향 동기화
+// store 변경 시 자동 동기화 (1.5초 디바운스)
 import { supabase } from './supabase';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
 import type { Account, Card, MonthlyBill } from '@/types';
 
+// Supabase → 로컬 store로 데이터 가져오기
 export async function pullFromSupabase() {
   if (!navigator.onLine) return;
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
+  // 모든 테이블 병렬 조회
   const [accountsRes, cardsRes, billsRes] = await Promise.all([
     supabase.from('accounts').select('*').order('sort_order'),
     supabase.from('cards').select('*').order('created_at'),
     supabase.from('bills').select('*'),
   ]);
 
+  // Supabase snake_case → 로컬 camelCase 변환 후 store 업데이트
   if (accountsRes.data) {
     const accounts: Account[] = accountsRes.data.map((a) => ({
       id: a.id,
@@ -62,6 +68,7 @@ export async function pullFromSupabase() {
   }
 }
 
+// 로컬 store → Supabase로 데이터 올리기
 export async function pushToSupabase() {
   if (!navigator.onLine) return;
 
@@ -72,6 +79,7 @@ export async function pushToSupabase() {
   const cards = useCardStore.getState().cards;
   const bills = useBillStore.getState().bills;
 
+  // 계좌 upsert (camelCase → snake_case 변환)
   for (const a of accounts) {
     await supabase.from('accounts').upsert({
       id: a.id,
@@ -84,6 +92,7 @@ export async function pushToSupabase() {
     }, { onConflict: 'id' });
   }
 
+  // 카드 upsert
   for (const c of cards) {
     await supabase.from('cards').upsert({
       id: c.id,
@@ -98,6 +107,7 @@ export async function pushToSupabase() {
     }, { onConflict: 'id' });
   }
 
+  // 청구서 upsert
   for (const b of bills) {
     await supabase.from('bills').upsert({
       id: b.id,
@@ -111,8 +121,11 @@ export async function pushToSupabase() {
   }
 }
 
+// ── 자동 동기화 설정 ──
+
 let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 
+// 1.5초 디바운스로 push 실행
 function debouncedSync() {
   if (syncTimeout) clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => {
@@ -120,10 +133,12 @@ function debouncedSync() {
   }, 1500);
 }
 
+// 구독 해제 함수 목록 (중복 구독 방지)
 let unsubscribers: (() => void)[] = [];
 
+// store 변경 시 자동 동기화 구독 설정
 export function setupAutoSync() {
-  // 기존 구독 해제 후 재등록 (중복 방지)
+  // 기존 구독 해제 후 재등록
   unsubscribers.forEach((unsub) => unsub());
   unsubscribers = [
     useAccountStore.subscribe(debouncedSync),

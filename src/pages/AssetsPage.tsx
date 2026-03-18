@@ -1,3 +1,6 @@
+// 자산 관리 페이지
+// 서브 탭: 이체 플랜 | 계좌 | 카드
+// 이체 플랜은 자동 계산 결과를 표시, 계좌/카드는 CRUD 관리
 import { useState } from 'react';
 import { MonthSelector } from '@/components/layout/MonthSelector';
 import { AccountManager } from '@/components/settings/AccountManager';
@@ -68,7 +71,7 @@ export function AssetsPage({ monthNav }: AssetsPageProps) {
             canGoNext={canGoNext}
           />
           <ShortageStrategy warnings={warnings} savingsAvailable={savingsAvailable} />
-          <TransferPlanList plans={transferPlans} />
+          <TransferPlanList plans={transferPlans} year={year} month={month} />
         </div>
       )}
 

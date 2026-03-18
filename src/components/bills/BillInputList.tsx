@@ -2,7 +2,7 @@ import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
 import { BillInputCard } from './BillInputCard';
 import { formatWon } from '@/utils/formatter';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Receipt } from 'lucide-react';
 
 interface BillInputListProps {
   year: number;
@@ -26,10 +26,17 @@ export function BillInputList({ year, month }: BillInputListProps) {
   const enteredCount = monthBills.filter(({ bill }) => bill && bill.amount > 0).length;
   const allEntered = cards.length > 0 && enteredCount === cards.length;
 
+  // 카드가 없는 경우 안내 메시지와 CTA 표시
   if (cards.length === 0) {
     return (
-      <div className="glass rounded-2xl p-10 text-center text-sm text-muted-foreground">
-        등록된 카드가 없습니다. 설정에서 카드를 먼저 추가해 주세요.
+      <div className="glass-elevated rounded-2xl py-16 text-center">
+        <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+          <Receipt className="h-7 w-7 text-primary" />
+        </div>
+        <h3 className="font-display text-base font-semibold">카드를 먼저 등록해주세요</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          자산 탭에서 카드를 추가하면<br />청구서를 입력할 수 있습니다.
+        </p>
       </div>
     );
   }

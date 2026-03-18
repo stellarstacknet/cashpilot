@@ -1,3 +1,5 @@
+// 이체 플랜 개별 항목 컴포넌트
+// 우선순위 뱃지, 출금→입금 계좌, 금액, 완료/건너뛰기 액션
 import type { TransferPlan } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useAccountStore } from '@/stores/useAccountStore';

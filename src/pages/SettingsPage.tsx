@@ -1,13 +1,15 @@
-import { Download, LogOut, RefreshCw, Check, Sun, Moon, Monitor } from 'lucide-react';
+import { Download, LogOut, RefreshCw, Check, Sun, Moon, Monitor, Bell, BellOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataManagement } from '@/components/settings/DataManagement';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { pullFromSupabase, pushToSupabase } from '@/lib/sync';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useTheme } from '@/hooks/useTheme';
-import { useState } from 'react';
+import { getNotificationStatus, requestNotificationPermission } from '@/utils/notifications';
+import { useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
+// 테마 선택 옵션
 const THEME_OPTIONS = [
   { value: 'light' as const, label: '라이트', icon: Sun },
   { value: 'dark' as const, label: '다크', icon: Moon },
@@ -19,7 +21,9 @@ export function SettingsPage() {
   const [syncing, setSyncing] = useState(false);
   const { canInstall, isInstalled, isIOS, install } = usePWAInstall();
   const { theme, setTheme } = useTheme();
+  const [notifStatus, setNotifStatus] = useState(getNotificationStatus);
 
+  // Supabase 동기화 처리
   const handleSync = async () => {
     setSyncing(true);
     try {
@@ -30,6 +34,12 @@ export function SettingsPage() {
     }
   };
 
+  // 알림 권한 요청
+  const handleEnableNotifications = useCallback(async () => {
+    const granted = await requestNotificationPermission();
+    setNotifStatus(granted ? 'granted' : 'denied');
+  }, []);
+
   return (
     <div className="space-y-5">
       <div>
@@ -37,6 +47,7 @@ export function SettingsPage() {
         <h1 className="font-display text-xl font-extrabold tracking-tight">설정</h1>
       </div>
 
+      {/* 사용자 프로필 + 동기화 */}
       {user && (
         <div className="glass-elevated rounded-2xl p-4">
           <div className="flex items-center gap-3">
@@ -72,6 +83,7 @@ export function SettingsPage() {
         </div>
       )}
 
+      {/* 테마 설정 */}
       <div className="glass-elevated rounded-2xl p-4">
         <p className="text-sm font-semibold mb-3">테마</p>
         <div className="flex gap-2">
@@ -93,6 +105,42 @@ export function SettingsPage() {
         </div>
       </div>
 
+      {/* 알림 설정 */}
+      <div className="glass-elevated rounded-2xl p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold">결제일 알림</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              {notifStatus === 'granted'
+                ? 'D-3, D-1에 알림을 받습니다'
+                : notifStatus === 'denied'
+                  ? '브라우저 설정에서 알림을 허용해주세요'
+                  : notifStatus === 'unsupported'
+                    ? '이 브라우저에서 알림을 지원하지 않습니다'
+                    : '결제일 전 알림을 받을 수 있습니다'}
+            </p>
+          </div>
+          {notifStatus === 'granted' ? (
+            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              <Bell className="h-3.5 w-3.5" /> 활성
+            </span>
+          ) : notifStatus === 'default' ? (
+            <Button
+              size="sm"
+              onClick={handleEnableNotifications}
+              className="rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20 text-xs h-8"
+            >
+              <Bell className="mr-1.5 h-3.5 w-3.5" /> 허용
+            </Button>
+          ) : notifStatus === 'denied' ? (
+            <span className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+              <BellOff className="h-3.5 w-3.5" /> 차단됨
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      {/* PWA 설치 */}
       <div className="glass-elevated rounded-2xl p-4">
         <div className="flex items-center justify-between">
           <div>
@@ -121,6 +169,7 @@ export function SettingsPage() {
         </div>
       </div>
 
+      {/* 데이터 관리 */}
       <section>
         <p className="section-label mb-2.5">데이터</p>
         <DataManagement />

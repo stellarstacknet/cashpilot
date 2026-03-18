@@ -1,3 +1,6 @@
+// 월 선택기 컴포넌트
+// 이전/다음 월 이동 + "오늘" 버튼으로 현재 월 복귀
+// 미래 월 접근 차단 (canGoNext prop)
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatYearMonth } from '@/utils/formatter';
 

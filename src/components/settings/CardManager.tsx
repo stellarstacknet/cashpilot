@@ -7,9 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useCardStore } from '@/stores/useCardStore';
 import { useAccountStore } from '@/stores/useAccountStore';
-import { CARD_ISSUERS, CARD_ISSUER_COLORS } from '@/utils/constants';
+import { CARD_ISSUERS, CARD_ISSUER_COLORS, CARD_COLORS } from '@/utils/constants';
 import { cn } from '@/lib/utils';
 
+// 카드 관리 컴포넌트
+// 카드 추가/수정/삭제, 활성화 토글, 커스텀 색상 선택 기능
 export function CardManager() {
   const { cards, addCard, updateCard, deleteCard, toggleActive } = useCardStore();
   const accounts = useAccountStore((s) => s.accounts);
@@ -20,10 +22,11 @@ export function CardManager() {
     issuer: '',
     paymentDay: '15',
     linkedAccountId: '',
+    color: '',
   });
 
   const resetForm = () => {
-    setForm({ name: '', issuer: '', paymentDay: '15', linkedAccountId: '' });
+    setForm({ name: '', issuer: '', paymentDay: '15', linkedAccountId: '', color: '' });
     setEditId(null);
   };
 
@@ -37,6 +40,7 @@ export function CardManager() {
       issuer: card.issuer,
       paymentDay: String(card.paymentDay),
       linkedAccountId: card.linkedAccountId,
+      color: card.color,
     });
     setEditId(id);
     setIsOpen(true);
@@ -44,13 +48,17 @@ export function CardManager() {
 
   const handleSave = () => {
     if (!form.issuer || !form.linkedAccountId) return;
+
+    // 색상 우선순위: 커스텀 선택 > 카드사 브랜드 색상 > 기본 회색
+    const selectedColor = form.color || CARD_ISSUER_COLORS[form.issuer] || '#6B7280';
+
     const data = {
       name: form.name || form.issuer,
       issuer: form.issuer,
       paymentDay: Math.max(1, Math.min(28, parseInt(form.paymentDay) || 15)),
       linkedAccountId: form.linkedAccountId,
       overdueRate: 19.9,
-      color: CARD_ISSUER_COLORS[form.issuer] || '#6B7280',
+      color: selectedColor,
       isActive: true,
     };
     if (editId) {
@@ -62,14 +70,31 @@ export function CardManager() {
     resetForm();
   };
 
+  // 카드사 변경 시 브랜드 색상으로 자동 설정
+  const handleIssuerChange = (issuer: string) => {
+    setForm({
+      ...form,
+      issuer,
+      color: CARD_ISSUER_COLORS[issuer] || '',
+    });
+  };
+
   return (
     <div className="space-y-2.5">
+      {/* 빈 상태 */}
       {cards.length === 0 && (
-        <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
-          등록된 카드가 없습니다.
+        <div className="glass-elevated rounded-2xl py-14 text-center">
+          <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+            <Plus className="h-7 w-7 text-primary" />
+          </div>
+          <h3 className="font-display text-base font-semibold">카드를 등록해주세요</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            카드를 추가하면 청구액 관리를 시작할 수 있습니다.
+          </p>
         </div>
       )}
 
+      {/* 카드 목록 */}
       {cards.map((card) => (
         <div key={card.id} className={cn('glass-elevated rounded-2xl p-4 press-scale', !card.isActive && 'opacity-45')}>
           <div className="flex items-center justify-between">
@@ -110,6 +135,7 @@ export function CardManager() {
         </div>
       ))}
 
+      {/* 카드 추가 버튼 */}
       <button
         onClick={openAdd}
         className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 p-3.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
@@ -117,15 +143,17 @@ export function CardManager() {
         <Plus className="h-4 w-4" /> 카드 추가
       </button>
 
+      {/* 카드 추가/수정 다이얼로그 */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editId ? '카드 수정' : '카드 추가'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* 카드사 선택 */}
             <div>
               <Label>카드사</Label>
-              <Select value={form.issuer} onValueChange={(v) => setForm({ ...form, issuer: v })}>
+              <Select value={form.issuer} onValueChange={handleIssuerChange}>
                 <SelectTrigger><SelectValue placeholder="카드사 선택" /></SelectTrigger>
                 <SelectContent>
                   {CARD_ISSUERS.map((issuer) => (
@@ -139,6 +167,8 @@ export function CardManager() {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* 카드 별칭 */}
             <div>
               <Label>카드 별칭 <span className="text-muted-foreground font-normal">(선택)</span></Label>
               <Input
@@ -147,6 +177,8 @@ export function CardManager() {
                 placeholder={form.issuer || '비워두면 카드사명 사용'}
               />
             </div>
+
+            {/* 결제일 */}
             <div>
               <Label>결제일 (1-28)</Label>
               <Input
@@ -157,6 +189,8 @@ export function CardManager() {
                 onChange={(e) => setForm({ ...form, paymentDay: e.target.value })}
               />
             </div>
+
+            {/* 연결 계좌 */}
             <div>
               <Label>연결 계좌</Label>
               <Select
@@ -172,6 +206,39 @@ export function CardManager() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* 카드 색상 커스텀 선택 */}
+            <div>
+              <Label>카드 색상</Label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {/* 카드사 기본 색상 */}
+                {form.issuer && CARD_ISSUER_COLORS[form.issuer] && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, color: CARD_ISSUER_COLORS[form.issuer] })}
+                    className={cn(
+                      'h-8 w-8 rounded-lg transition-all ring-offset-2 ring-offset-background',
+                      form.color === CARD_ISSUER_COLORS[form.issuer] && 'ring-2 ring-primary scale-110',
+                    )}
+                    style={{ backgroundColor: CARD_ISSUER_COLORS[form.issuer] }}
+                    title="카드사 기본 색상"
+                  />
+                )}
+                {/* 프리셋 색상 목록 */}
+                {CARD_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setForm({ ...form, color })}
+                    className={cn(
+                      'h-8 w-8 rounded-lg transition-all ring-offset-2 ring-offset-background',
+                      form.color === color && 'ring-2 ring-primary scale-110',
+                    )}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
           <DialogFooter>

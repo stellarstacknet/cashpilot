@@ -1,32 +1,35 @@
-import { useState, useEffect } from 'react';
 import type { TransferPlan } from '@/types';
 import { TransferPlanItem } from './TransferPlanItem';
 import { formatWon } from '@/utils/formatter';
+import { useTransferStatusStore } from '@/stores/useTransferStatusStore';
 import { ArrowRightLeft } from 'lucide-react';
 
 interface TransferPlanListProps {
   plans: TransferPlan[];
+  year: number;
+  month: number;
 }
 
-export function TransferPlanList({ plans: initialPlans }: TransferPlanListProps) {
-  const [plans, setPlans] = useState(initialPlans);
+// 이체 플랜 목록 컴포넌트
+// 상태(완료/건너뛰기)는 TransferStatusStore에 영속화
+export function TransferPlanList({ plans, year, month }: TransferPlanListProps) {
+  const { getStatus, setStatus } = useTransferStatusStore();
 
-  useEffect(() => {
-    setPlans(initialPlans);
-  }, [initialPlans]);
+  // 영속 상태를 반영한 플랜 목록 생성
+  const plansWithStatus = plans.map((plan) => ({
+    ...plan,
+    status: getStatus(year, month, plan.id),
+  }));
 
   const handleMarkDone = (id: string) => {
-    setPlans((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: 'done' as const } : p)),
-    );
+    setStatus(year, month, id, 'done');
   };
 
   const handleSkip = (id: string) => {
-    setPlans((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: 'skipped' as const } : p)),
-    );
+    setStatus(year, month, id, 'skipped');
   };
 
+  // 이체 플랜이 없는 경우 빈 상태 표시
   if (plans.length === 0) {
     return (
       <div className="glass rounded-2xl p-10 text-center">
@@ -41,14 +44,14 @@ export function TransferPlanList({ plans: initialPlans }: TransferPlanListProps)
     );
   }
 
-  const pendingCount = plans.filter((p) => p.status === 'pending').length;
-  const totalAmount = plans
+  const pendingCount = plansWithStatus.filter((p) => p.status === 'pending').length;
+  const totalAmount = plansWithStatus
     .filter((p) => p.status === 'pending')
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
     <div className="space-y-2.5">
-      {plans.map((plan) => (
+      {plansWithStatus.map((plan) => (
         <TransferPlanItem
           key={plan.id}
           plan={plan}
@@ -57,6 +60,7 @@ export function TransferPlanList({ plans: initialPlans }: TransferPlanListProps)
         />
       ))}
 
+      {/* 대기 중인 이체 요약 */}
       <div className="glass-elevated rounded-2xl p-4">
         <div className="flex items-center justify-between">
           <div>

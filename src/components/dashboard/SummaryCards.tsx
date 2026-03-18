@@ -1,3 +1,5 @@
+// 대시보드 요약 카드 컴포넌트
+// 히어로 그라데이션 총 잔액 카드 + 청구액/잔여 2칼럼 카드
 import { formatWon } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
 import { ArrowDown, ArrowUp } from 'lucide-react';

@@ -1,3 +1,6 @@
+// 하단 플로팅 탭 네비게이션
+// 활성 탭은 아이콘 + 라벨, 비활성 탭은 아이콘만 표시
+// 고정 너비로 탭 전환 시 레이아웃 쉬프트 방지
 import { LayoutDashboard, Receipt, Wallet, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

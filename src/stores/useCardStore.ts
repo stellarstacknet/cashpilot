@@ -1,3 +1,5 @@
+// 카드 관리 Zustand store
+// localStorage에 영속화, 카드 CRUD + 활성 토글 + 정렬 기능
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Card } from '@/types';
@@ -18,6 +20,7 @@ export const useCardStore = create<CardStore>()(
     (set) => ({
       cards: [],
 
+      // 카드 추가 (sortOrder는 자동 부여)
       addCard: (data) =>
         set((state) => ({
           cards: [
@@ -32,6 +35,7 @@ export const useCardStore = create<CardStore>()(
           ],
         })),
 
+      // 카드 정보 부분 업데이트
       updateCard: (id, data) =>
         set((state) => ({
           cards: state.cards.map((c) =>
@@ -39,11 +43,13 @@ export const useCardStore = create<CardStore>()(
           ),
         })),
 
+      // 카드 삭제
       deleteCard: (id) =>
         set((state) => ({
           cards: state.cards.filter((c) => c.id !== id),
         })),
 
+      // 활성/비활성 토글
       toggleActive: (id) =>
         set((state) => ({
           cards: state.cards.map((c) =>
@@ -51,8 +57,10 @@ export const useCardStore = create<CardStore>()(
           ),
         })),
 
+      // 카드 순서 변경
       reorder: (cards) => set({ cards }),
 
+      // 전체 초기화
       reset: () => set({ cards: [] }),
     }),
     { name: 'cashpilot-cards' },

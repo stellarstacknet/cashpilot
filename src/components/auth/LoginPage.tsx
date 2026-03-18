@@ -1,3 +1,5 @@
+// 로그인 페이지
+// Google OAuth를 통한 인증, 앱 로고 + 로그인 버튼 표시
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export function LoginPage() {

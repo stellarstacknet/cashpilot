@@ -228,3 +228,50 @@ html, body, #root {
 .amount-negative { color: #f43f5e; }
 .dark .amount-positive { color: #34d399; }
 .dark .amount-negative { color: #fb7185; }
+
+/* ── 다크모드 전환 애니메이션 ── */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+html *,
+html *::before,
+html *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ── 스켈레톤 로딩 애니메이션 ── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, hsl(var(--muted)) 0%, hsl(var(--muted-foreground) / 0.08) 50%, hsl(var(--muted)) 100%);
+  background-size: 200% 100%;
+  border-radius: 0.75rem;
+}
+
+/* ── Empty State 아이콘 부드러운 바운스 ── */
+@keyframes empty-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.empty-state-icon {
+  animation: empty-bounce 2.5s ease-in-out infinite;
+}
+
+/* ── 스와이프 전환 애니메이션 ── */
+@keyframes slide-in-left {
+  from { transform: translateX(-15px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(15px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.slide-left {
+  animation: slide-in-left 0.25s ease-out;
+}
+.slide-right {
+  animation: slide-in-right 0.25s ease-out;
+}

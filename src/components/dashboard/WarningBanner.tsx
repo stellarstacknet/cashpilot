@@ -1,3 +1,5 @@
+// 잔액 부족 경고 배너 컴포넌트
+// 계좌 잔액이 청구액에 미달할 때 표시
 import { AlertTriangle } from 'lucide-react';
 
 interface WarningBannerProps {

@@ -1,3 +1,5 @@
+// 대시보드 페이지
+// 총 잔액, 청구액, 잔여금, 계좌별 현황, 결제 타임라인 표시
 import { CalendarX } from 'lucide-react';
 import { MonthSelector } from '@/components/layout/MonthSelector';
 import { SummaryCards } from '@/components/dashboard/SummaryCards';

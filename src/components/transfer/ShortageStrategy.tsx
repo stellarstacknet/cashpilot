@@ -1,3 +1,5 @@
+// 부족 대응 전략 컴포넌트
+// 잔액 부족 경고와 저축 가능 금액 표시
 import { AlertTriangle } from 'lucide-react';
 
 interface ShortageStrategyProps {

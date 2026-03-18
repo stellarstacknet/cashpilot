@@ -1,3 +1,5 @@
+// 계좌 관리 Zustand store
+// localStorage에 영속화, 계좌 CRUD + 잔액 업데이트 + 정렬 기능
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Account, AccountPurpose } from '@/types';
@@ -18,6 +20,7 @@ export const useAccountStore = create<AccountStore>()(
     (set) => ({
       accounts: [],
 
+      // 계좌 추가 (sortOrder는 자동 부여)
       addAccount: (data) =>
         set((state) => ({
           accounts: [
@@ -32,6 +35,7 @@ export const useAccountStore = create<AccountStore>()(
           ],
         })),
 
+      // 계좌 정보 부분 업데이트
       updateAccount: (id, data) =>
         set((state) => ({
           accounts: state.accounts.map((a) =>
@@ -39,11 +43,13 @@ export const useAccountStore = create<AccountStore>()(
           ),
         })),
 
+      // 계좌 삭제 (연결 카드 처리는 AccountManager 컴포넌트에서 수행)
       deleteAccount: (id) =>
         set((state) => ({
           accounts: state.accounts.filter((a) => a.id !== id),
         })),
 
+      // 잔액만 빠르게 업데이트
       updateBalance: (id, balance) =>
         set((state) => ({
           accounts: state.accounts.map((a) =>
@@ -51,8 +57,10 @@ export const useAccountStore = create<AccountStore>()(
           ),
         })),
 
+      // 계좌 순서 변경
       reorder: (accounts) => set({ accounts }),
 
+      // 전체 초기화
       reset: () => set({ accounts: [] }),
     }),
     { name: 'cashpilot-accounts' },

@@ -1,3 +1,6 @@
+// 수입 관리 Zustand store
+// 현재 UI에서 직접 사용하지 않으나, 데이터 import/export 호환을 위해 유지
+// 향후 수입 관리 기능 추가 시 활용
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Income } from '@/types';
