@@ -13,8 +13,8 @@ export default defineConfig({
         name: 'CashPilot - 카드 청구액 관리',
         short_name: 'CashPilot',
         description: '매달 카드 청구액을 입력하면 계좌 간 이체 플랜을 자동 계산해주는 대시보드',
-        theme_color: '#f0eef5',
-        background_color: '#f0eef5',
+        theme_color: '#121212',
+        background_color: '#121212',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
@@ -46,6 +46,17 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/spoqa\.github\.io\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'spoqa-font-cache',
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
