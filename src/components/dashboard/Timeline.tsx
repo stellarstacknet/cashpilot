@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import type { TimelineEvent } from '@/types';
 import { formatCurrency } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
-import { CARD_LOGOS } from '@/utils/constants';
+import { getCardLogo } from '@/utils/constants';
 import { ChevronRight } from 'lucide-react';
 
 interface TimelineProps {
@@ -84,10 +84,10 @@ export function Timeline({ events, month, expandedDays, onToggleDay }: TimelineP
                         i !== dayEvents.length - 1 && 'border-b border-border/30',
                       )}
                     >
-                      {event.issuer && CARD_LOGOS[event.issuer] ? (
+                      {event.issuer && getCardLogo(event.issuer!) ? (
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl">
                           <img
-                            src={CARD_LOGOS[event.issuer]}
+                            src={getCardLogo(event.issuer!)}
                             alt=""
                             className="h-full w-full object-contain"
                           />

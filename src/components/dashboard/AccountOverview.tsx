@@ -5,7 +5,7 @@ import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
 import { formatWon } from '@/utils/formatter';
-import { BANK_COLORS, BANK_LOGOS, CARD_LOGOS } from '@/utils/constants';
+import { BANK_COLORS, getBankLogo, getCardLogo } from '@/utils/constants';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -58,10 +58,10 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
               )}
               onClick={() => hasBills && onToggle(account.id)}
             >
-              {BANK_LOGOS[account.bank] ? (
+              {getBankLogo(account.bank) ? (
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
                   <img
-                    src={BANK_LOGOS[account.bank]}
+                    src={getBankLogo(account.bank)!}
                     alt={account.bank}
                     className="h-full w-full object-contain"
                   />
@@ -132,9 +132,9 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
                         return (
                           <div key={card.id} className="flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
-                              {CARD_LOGOS[card.issuer] ? (
+                              {getCardLogo(card.issuer) ? (
                                 <div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-md">
-                                  <img src={CARD_LOGOS[card.issuer]} alt="" className="h-full w-full object-contain" />
+                                  <img src={getCardLogo(card.issuer)!} alt="" className="h-full w-full object-contain" />
                                 </div>
                               ) : (
                                 <div

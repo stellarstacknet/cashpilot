@@ -5,7 +5,7 @@ import { formatCurrency, parseAmountInput } from '@/utils/formatter';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { CARD_LOGOS } from '@/utils/constants';
+import { getCardLogo } from '@/utils/constants';
 
 interface BillInputCardProps {
   card: CardType;
@@ -72,9 +72,9 @@ export function BillInputCard({
     )}>
       <div className="flex items-center gap-3.5">
         {/* 카드사 로고 */}
-        {CARD_LOGOS[card.issuer] ? (
+        {getCardLogo(card.issuer) ? (
           <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
-            <img src={CARD_LOGOS[card.issuer]} alt={card.issuer} className="h-full w-full object-contain" />
+            <img src={getCardLogo(card.issuer)} alt={card.issuer} className="h-full w-full object-contain" />
           </div>
         ) : (
           <div

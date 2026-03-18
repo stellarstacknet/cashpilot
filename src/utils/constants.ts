@@ -103,5 +103,22 @@ export const CARD_LOGOS: Record<string, string> = {
   'BC카드': '/logos/bccard.png',
 };
 
+// 부분 매칭으로 로고 경로 조회
+export function getBankLogo(bank: string): string | undefined {
+  if (BANK_LOGOS[bank]) return BANK_LOGOS[bank];
+  for (const [key, value] of Object.entries(BANK_LOGOS)) {
+    if (key.includes(bank) || bank.includes(key)) return value;
+  }
+  return undefined;
+}
+
+export function getCardLogo(issuer: string): string | undefined {
+  if (CARD_LOGOS[issuer]) return CARD_LOGOS[issuer];
+  for (const [key, value] of Object.entries(CARD_LOGOS)) {
+    if (key.includes(issuer) || issuer.includes(key)) return value;
+  }
+  return undefined;
+}
+
 // 앱 버전
 export const APP_VERSION = '1.0.0';

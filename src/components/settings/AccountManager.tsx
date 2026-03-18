@@ -18,7 +18,7 @@ import {
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import type { AccountPurpose } from '@/types';
-import { BANKS, ACCOUNT_PURPOSE_LABELS, BANK_COLORS, BANK_LOGOS } from '@/utils/constants';
+import { BANKS, ACCOUNT_PURPOSE_LABELS, BANK_COLORS, getBankLogo } from '@/utils/constants';
 import { formatWon, parseAmountInput, formatCurrency } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
 
@@ -116,9 +116,9 @@ export function AccountManager() {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3.5">
                   {/* 은행 로고 */}
-                  {BANK_LOGOS[account.bank] ? (
+                  {getBankLogo(account.bank) ? (
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
-                      <img src={BANK_LOGOS[account.bank]} alt={account.bank} className="h-full w-full object-contain" />
+                      <img src={getBankLogo(account.bank)} alt={account.bank} className="h-full w-full object-contain" />
                     </div>
                   ) : (
                     <div

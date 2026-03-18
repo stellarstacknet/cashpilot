@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { useCardStore } from '@/stores/useCardStore';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useBillStore } from '@/stores/useBillStore';
-import { CARD_ISSUERS, CARD_ISSUER_COLORS, CARD_COLORS, CARD_LOGOS } from '@/utils/constants';
+import { CARD_ISSUERS, CARD_ISSUER_COLORS, CARD_COLORS, getCardLogo } from '@/utils/constants';
 import { formatWon } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
 
@@ -118,9 +118,9 @@ export function CardManager() {
               <div className="flex items-start justify-between">
                 {/* 카드 이미지 + 정보 */}
                 <div className="flex items-center gap-3.5">
-                  {CARD_LOGOS[card.issuer] ? (
+                  {getCardLogo(card.issuer) ? (
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
-                      <img src={CARD_LOGOS[card.issuer]} alt={card.issuer} className="h-full w-full object-contain" />
+                      <img src={getCardLogo(card.issuer)} alt={card.issuer} className="h-full w-full object-contain" />
                     </div>
                   ) : (
                     <div
