@@ -12,7 +12,7 @@ import { useState } from 'react';
 export function SettingsPage() {
   const { user, signOut } = useAuthStore();
   const [syncing, setSyncing] = useState(false);
-  const { canInstall, isInstalled, install } = usePWAInstall();
+  const { canInstall, isInstalled, isIOS, install } = usePWAInstall();
 
   const handleSync = async () => {
     setSyncing(true);
@@ -47,31 +47,29 @@ export function SettingsPage() {
         </div>
       )}
 
-      {(canInstall || isInstalled) && (
-        <div className="rounded-xl border bg-white p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium">앱 설치</p>
-              <p className="text-xs text-muted-foreground">
-                {isInstalled ? '이미 설치되어 있습니다' : '홈 화면에 앱을 추가합니다'}
-              </p>
-            </div>
-            <Button
-              variant={isInstalled ? 'ghost' : 'default'}
-              size="sm"
-              onClick={install}
-              disabled={isInstalled}
-              className="rounded-lg"
-            >
-              {isInstalled ? (
-                <><Check className="mr-1 h-4 w-4" />설치됨</>
-              ) : (
-                <><Download className="mr-1 h-4 w-4" />설치</>
-              )}
-            </Button>
+      <div className="rounded-xl border bg-white p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">앱 설치</p>
+            <p className="text-xs text-muted-foreground">
+              {isInstalled
+                ? '이미 설치되어 있습니다'
+                : isIOS
+                  ? 'Safari 공유 버튼 → 홈 화면에 추가'
+                  : '홈 화면에 앱을 추가합니다'}
+            </p>
           </div>
+          {canInstall ? (
+            <Button size="sm" onClick={install} className="rounded-lg">
+              <Download className="mr-1 h-4 w-4" />설치
+            </Button>
+          ) : isInstalled ? (
+            <Button variant="ghost" size="sm" disabled className="rounded-lg">
+              <Check className="mr-1 h-4 w-4" />설치됨
+            </Button>
+          ) : null}
         </div>
-      )}
+      </div>
 
       <AccountManager />
       <Separator />

@@ -5,13 +5,20 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+const isIOS = () =>
+  /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+
+const isStandalone = () =>
+  window.matchMedia('(display-mode: standalone)').matches ||
+  ('standalone' in navigator && (navigator as unknown as { standalone: boolean }).standalone);
+
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // 이미 설치된 경우 감지
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (isStandalone()) {
       setIsInstalled(true);
       return;
     }
@@ -41,5 +48,10 @@ export function usePWAInstall() {
     setDeferredPrompt(null);
   };
 
-  return { canInstall: !!deferredPrompt && !isInstalled, isInstalled, install };
+  return {
+    canInstall: !!deferredPrompt && !isInstalled,
+    isInstalled,
+    isIOS: isIOS() && !isInstalled,
+    install,
+  };
 }
