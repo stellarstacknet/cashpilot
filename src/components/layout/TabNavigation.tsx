@@ -17,28 +17,28 @@ const tabs: { id: TabId; label: string; icon: React.ComponentType<{ className?: 
 
 export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-background/70 backdrop-blur-2xl pb-safe">
-      <div className="mx-auto flex max-w-lg">
-        {tabs.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            onClick={() => onTabChange(id)}
-            className={cn(
-              'flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-all duration-200',
-              activeTab === id
-                ? 'text-primary'
-                : 'text-muted-foreground active:text-foreground',
-            )}
-          >
-            <div className={cn(
-              'flex items-center justify-center rounded-2xl px-5 py-1.5 transition-all duration-200',
-              activeTab === id && 'bg-primary/10 shadow-sm shadow-primary/10',
-            )}>
-              <Icon className={cn('h-[22px] w-[22px] transition-transform duration-200', activeTab === id && 'scale-110')} />
-            </div>
-            <span className="tracking-wide">{label}</span>
-          </button>
-        ))}
+    <nav className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 pb-safe">
+      <div className="floating-nav flex items-center gap-1 rounded-2xl px-2 py-1.5">
+        {tabs.map(({ id, label, icon: Icon }) => {
+          const isActive = activeTab === id;
+          return (
+            <button
+              key={id}
+              onClick={() => onTabChange(id)}
+              className={cn(
+                'relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all duration-300',
+                isActive
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              <Icon className={cn('h-[18px] w-[18px]', isActive && 'stroke-[2.5]')} />
+              {isActive && (
+                <span className="font-display text-[11px] tracking-wide">{label}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
     </nav>
   );

@@ -1,6 +1,6 @@
-import { Wallet, CreditCard, TrendingDown } from 'lucide-react';
 import { formatWon } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
 interface SummaryCardsProps {
   totalBalance: number;
@@ -15,39 +15,42 @@ export function SummaryCards({
 }: SummaryCardsProps) {
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 p-6 text-white shadow-xl shadow-blue-600/20">
-        <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-white/5" />
-        <div className="absolute -right-2 top-10 h-20 w-20 rounded-full bg-white/5" />
-        <div className="relative">
-          <div className="flex items-center gap-2 text-sm text-blue-100/80">
-            <Wallet className="h-4 w-4" />
-            <span className="font-medium">총 잔액</span>
-          </div>
-          <p className="mt-3 font-display text-3xl font-bold tracking-tight tabular-nums">
+      <div className="hero-gradient rounded-[20px] p-6 text-white shadow-xl shadow-orange-500/20 dark:shadow-orange-500/10">
+        <div className="relative z-10">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">
+            Total Balance
+          </p>
+          <p className="mt-2 font-display text-[34px] font-extrabold leading-none tracking-tight tabular-nums">
             {formatWon(totalBalance)}
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-card border border-border/40 p-4 shadow-sm card-interactive">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <CreditCard className="h-3.5 w-3.5" />
-            청구액
+        <div className="glass-elevated rounded-2xl p-4 press-scale">
+          <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/10">
+            <ArrowUp className="h-4 w-4 text-rose-500" />
           </div>
-          <p className="mt-2.5 font-display text-xl font-bold tracking-tight tabular-nums text-red-500 dark:text-red-400">
+          <p className="text-[11px] font-medium text-muted-foreground">청구액</p>
+          <p className="mt-1 font-display text-lg font-bold tabular-nums tracking-tight text-rose-500 dark:text-rose-400">
             {formatWon(totalBills)}
           </p>
         </div>
 
-        <div className="rounded-2xl bg-card border border-border/40 p-4 shadow-sm card-interactive">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <TrendingDown className="h-3.5 w-3.5" />
-            잔여
+        <div className="glass-elevated rounded-2xl p-4 press-scale">
+          <div className={cn(
+            'mb-3 flex h-8 w-8 items-center justify-center rounded-xl',
+            remaining >= 0 ? 'bg-emerald-500/10' : 'bg-rose-500/10',
+          )}>
+            <ArrowDown className={cn(
+              'h-4 w-4',
+              remaining >= 0 ? 'text-emerald-500' : 'text-rose-500',
+            )} />
           </div>
+          <p className="text-[11px] font-medium text-muted-foreground">잔여</p>
           <p className={cn(
-            'mt-2.5 font-display text-xl font-bold tracking-tight tabular-nums',
-            remaining >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400',
+            'mt-1 font-display text-lg font-bold tabular-nums tracking-tight',
+            remaining >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400',
           )}>
             {formatWon(remaining)}
           </p>

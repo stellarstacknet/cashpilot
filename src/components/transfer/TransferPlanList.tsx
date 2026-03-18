@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { TransferPlan } from '@/types';
 import { TransferPlanItem } from './TransferPlanItem';
 import { formatWon } from '@/utils/formatter';
+import { ArrowRightLeft } from 'lucide-react';
 
 interface TransferPlanListProps {
   plans: TransferPlan[];
@@ -28,8 +29,14 @@ export function TransferPlanList({ plans: initialPlans }: TransferPlanListProps)
 
   if (plans.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-        이체가 필요하지 않습니다. 모든 계좌에 잔액이 충분합니다.
+      <div className="glass rounded-2xl p-10 text-center">
+        <ArrowRightLeft className="mx-auto mb-3 h-8 w-8 text-muted-foreground/40" />
+        <p className="text-sm text-muted-foreground">
+          이체가 필요하지 않습니다.
+        </p>
+        <p className="mt-1 text-[11px] text-muted-foreground/60">
+          모든 계좌에 잔액이 충분합니다.
+        </p>
       </div>
     );
   }
@@ -40,7 +47,7 @@ export function TransferPlanList({ plans: initialPlans }: TransferPlanListProps)
     .reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {plans.map((plan) => (
         <TransferPlanItem
           key={plan.id}
@@ -50,10 +57,15 @@ export function TransferPlanList({ plans: initialPlans }: TransferPlanListProps)
         />
       ))}
 
-      <div className="rounded-xl border bg-gradient-to-r from-muted/50 to-muted/30 p-4">
-        <div className="flex items-center justify-between text-sm">
-          <span>대기 중인 이체: {pendingCount}건</span>
-          <span className="font-mono font-bold">{formatWon(totalAmount)}</span>
+      <div className="glass-elevated rounded-2xl p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[11px] text-muted-foreground">대기 중</p>
+            <p className="text-sm font-semibold">{pendingCount}건</p>
+          </div>
+          <p className="font-display text-lg font-bold tabular-nums tracking-tight">
+            {formatWon(totalAmount)}
+          </p>
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { formatYearMonth } from '@/utils/formatter';
 
 interface MonthSelectorProps {
@@ -22,23 +21,35 @@ export function MonthSelector({
   canGoNext = true,
 }: MonthSelectorProps) {
   return (
-    <div className="flex items-center justify-between rounded-2xl bg-card p-2.5 border border-border/40 shadow-sm">
-      <Button variant="ghost" size="icon" onClick={onPrev} className="rounded-xl transition-all duration-200">
+    <div className="flex items-center justify-between">
+      <button
+        onClick={onPrev}
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
+      >
         <ChevronLeft className="h-5 w-5" />
-      </Button>
+      </button>
 
       <div className="flex items-center gap-2.5">
-        <h2 className="font-display text-base font-bold tracking-tight">{formatYearMonth(year, month)}</h2>
+        <h2 className="font-display text-[15px] font-bold tracking-tight">
+          {formatYearMonth(year, month)}
+        </h2>
         {!isCurrentMonth && onToday && (
-          <Button variant="outline" size="sm" onClick={onToday} className="h-7 rounded-full px-3 text-[11px] font-medium">
+          <button
+            onClick={onToday}
+            className="rounded-lg bg-primary/10 px-2.5 py-1 text-[10px] font-bold text-primary transition-colors hover:bg-primary/20"
+          >
             오늘
-          </Button>
+          </button>
         )}
       </div>
 
-      <Button variant="ghost" size="icon" onClick={onNext} disabled={!canGoNext} className="rounded-xl transition-all duration-200">
+      <button
+        onClick={onNext}
+        disabled={!canGoNext}
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 active:scale-95"
+      >
         <ChevronRight className="h-5 w-5" />
-      </Button>
+      </button>
     </div>
   );
 }

@@ -31,37 +31,46 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {accountData.map(({ account, linkedCards, billTotal, afterPayment }) => (
-        <div key={account.id} className="rounded-2xl bg-card border border-border/40 p-5 shadow-sm card-interactive">
+        <div key={account.id} className="glass-elevated rounded-2xl p-4 press-scale">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="font-display text-sm font-semibold">{account.name}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{account.bank}</p>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 font-display text-xs font-bold text-primary">
+                {account.bank.slice(0, 2)}
+              </div>
+              <div>
+                <p className="text-sm font-semibold">{account.name}</p>
+                <p className="text-[11px] text-muted-foreground">{account.bank}</p>
+              </div>
             </div>
-            <p className="font-display text-lg font-bold tabular-nums tracking-tight">{formatWon(account.balance)}</p>
+            <p className="font-display text-base font-bold tabular-nums tracking-tight">
+              {formatWon(account.balance)}
+            </p>
           </div>
 
           {billTotal > 0 && (
-            <div className="mt-4 border-t border-border/30 pt-4 space-y-2.5">
+            <div className="mt-3.5 space-y-2 border-t border-border/40 pt-3.5">
               {linkedCards.map((card) => {
                 const bill = monthBills.find((b) => b.cardId === card.id);
                 if (!bill || bill.amount === 0) return null;
                 return (
                   <div key={card.id} className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full shadow-sm" style={{ backgroundColor: card.color }} />
-                      <span className="text-muted-foreground">{card.name} ({card.paymentDay}일)</span>
+                      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: card.color }} />
+                      <span className="text-muted-foreground">{card.name}</span>
                     </div>
-                    <span className="text-red-500 dark:text-red-400 tabular-nums font-semibold">-{formatWon(bill.amount)}</span>
+                    <span className="amount-negative tabular-nums font-medium">
+                      -{formatWon(bill.amount)}
+                    </span>
                   </div>
                 );
               })}
-              <div className="flex items-center justify-between pt-2.5 border-t border-dashed border-border/30">
-                <span className="text-xs font-medium text-muted-foreground">결제 후 잔액</span>
+              <div className="flex items-center justify-between border-t border-dashed border-border/30 pt-2.5">
+                <span className="text-[11px] text-muted-foreground">결제 후</span>
                 <span className={cn(
-                  'font-display text-base font-bold tabular-nums tracking-tight',
-                  afterPayment >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400',
+                  'font-display text-sm font-bold tabular-nums',
+                  afterPayment >= 0 ? 'amount-positive' : 'amount-negative',
                 )}>
                   {formatWon(afterPayment)}
                 </span>
@@ -70,7 +79,7 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
           )}
 
           {billTotal === 0 && linkedCards.length === 0 && (
-            <p className="mt-3 text-xs text-muted-foreground">연결된 카드 없음</p>
+            <p className="mt-2.5 text-[11px] text-muted-foreground">연결된 카드 없음</p>
           )}
         </div>
       ))}

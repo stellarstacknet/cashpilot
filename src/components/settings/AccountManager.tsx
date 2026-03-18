@@ -3,7 +3,6 @@ import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useAccountStore } from '@/stores/useAccountStore';
@@ -27,10 +26,7 @@ export function AccountManager() {
     setEditId(null);
   };
 
-  const openAdd = () => {
-    resetForm();
-    setIsOpen(true);
-  };
+  const openAdd = () => { resetForm(); setIsOpen(true); };
 
   const openEdit = (id: string) => {
     const account = accounts.find((a) => a.id === id);
@@ -48,61 +44,56 @@ export function AccountManager() {
   const handleSave = () => {
     const balance = parseAmountInput(form.balance);
     if (!form.bank) return;
-
     const name = form.name || form.bank;
-
     if (editId) {
-      updateAccount(editId, {
-        name,
-        bank: form.bank,
-        balance,
-        purpose: form.purpose,
-      });
+      updateAccount(editId, { name, bank: form.bank, balance, purpose: form.purpose });
     } else {
-      addAccount({
-        name,
-        bank: form.bank,
-        balance,
-        purpose: form.purpose,
-      });
+      addAccount({ name, bank: form.bank, balance, purpose: form.purpose });
     }
     setIsOpen(false);
     resetForm();
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">계좌 관리</h3>
-        <Button size="sm" onClick={openAdd} className="rounded-lg">
-          <Plus className="mr-1 h-4 w-4" /> 추가
-        </Button>
-      </div>
-
+    <div className="space-y-2.5">
       {accounts.length === 0 && (
-        <p className="text-sm text-muted-foreground py-4 text-center">등록된 계좌가 없습니다.</p>
+        <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
+          등록된 계좌가 없습니다.
+        </div>
       )}
 
       {accounts.map((account) => (
-        <Card key={account.id} className="rounded-xl">
-          <CardContent className="flex items-center justify-between p-3">
-            <div>
-              <p className="text-sm font-medium">{account.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {account.bank} · {ACCOUNT_PURPOSE_LABELS[account.purpose]} · {formatWon(account.balance)}
-              </p>
+        <div key={account.id} className="glass-elevated rounded-2xl p-4 press-scale">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 font-display text-xs font-bold text-primary">
+                {account.bank.slice(0, 2)}
+              </div>
+              <div>
+                <p className="text-sm font-semibold">{account.name}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {account.bank} · {ACCOUNT_PURPOSE_LABELS[account.purpose]} · {formatWon(account.balance)}
+                </p>
+              </div>
             </div>
-            <div className="flex gap-1">
-              <Button size="icon" variant="ghost" onClick={() => openEdit(account.id)}>
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="ghost" onClick={() => deleteAccount(account.id)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
+            <div className="flex gap-0.5">
+              <button onClick={() => openEdit(account.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+              <button onClick={() => deleteAccount(account.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500 transition-colors">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
+
+      <button
+        onClick={openAdd}
+        className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 p-3.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+      >
+        <Plus className="h-4 w-4" /> 계좌 추가
+      </button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>

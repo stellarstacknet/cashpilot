@@ -6,8 +6,7 @@ import { AccountOverview } from '@/components/dashboard/AccountOverview';
 import { Timeline } from '@/components/dashboard/Timeline';
 import { useDashboardSummary } from '@/hooks/useDashboardSummary';
 import { useTransferPlan } from '@/hooks/useTransferPlan';
-import { formatWon } from '@/utils/formatter';
-import { formatYearMonth } from '@/utils/formatter';
+import { formatWon, formatYearMonth } from '@/utils/formatter';
 
 interface DashboardPageProps {
   monthNav: {
@@ -17,6 +16,7 @@ interface DashboardPageProps {
     goToNextMonth: () => void;
     goToCurrentMonth: () => void;
     isCurrentMonth: boolean;
+    canGoNext: boolean;
   };
 }
 
@@ -27,6 +27,15 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
 
   return (
     <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[11px] font-semibold text-muted-foreground">CASHPILOT</p>
+          <h1 className="font-display text-xl font-extrabold tracking-tight">
+            내 자산 현황
+          </h1>
+        </div>
+      </div>
+
       <MonthSelector
         year={year}
         month={month}
@@ -38,11 +47,11 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
       />
 
       {summary.totalBills === 0 && !isCurrentMonth ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
-            <CalendarX className="h-8 w-8 text-muted-foreground" />
+        <div className="glass-elevated flex flex-col items-center justify-center rounded-2xl py-16 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
+            <CalendarX className="h-7 w-7 text-muted-foreground" />
           </div>
-          <h3 className="font-display text-lg font-semibold">{formatYearMonth(year, month)}</h3>
+          <h3 className="font-display text-base font-semibold">{formatYearMonth(year, month)}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             이 달의 청구서 데이터가 없습니다.
           </p>
@@ -57,20 +66,20 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
 
           <WarningBanner warnings={warnings} />
 
-          <div>
-            <h3 className="mb-3 font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">계좌별 현황</h3>
+          <section>
+            <p className="section-label mb-2.5">계좌별 현황</p>
             <AccountOverview year={year} month={month} />
-          </div>
+          </section>
 
-          <div>
-            <h3 className="mb-3 font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">타임라인</h3>
+          <section>
+            <p className="section-label mb-2.5">타임라인</p>
             <Timeline events={summary.timelineEvents} month={month} />
-          </div>
+          </section>
 
           {savingsAvailable > 0 && (
-            <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/30 p-5 text-center">
-              <p className="text-sm text-emerald-700 dark:text-emerald-400">
-                저축 가능 금액: <strong>{formatWon(savingsAvailable)}</strong>
+            <div className="glass-elevated rounded-2xl p-5 text-center">
+              <p className="text-sm text-emerald-600 dark:text-emerald-400">
+                저축 가능 금액: <strong className="font-display">{formatWon(savingsAvailable)}</strong>
               </p>
             </div>
           )}

@@ -11,6 +11,7 @@ interface TransferPlanPageProps {
     goToNextMonth: () => void;
     goToCurrentMonth: () => void;
     isCurrentMonth: boolean;
+    canGoNext: boolean;
   };
 }
 
@@ -19,7 +20,12 @@ export function TransferPlanPage({ monthNav }: TransferPlanPageProps) {
   const { transferPlans, warnings, savingsAvailable } = useTransferPlan(year, month);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      <div>
+        <p className="text-[11px] font-semibold text-muted-foreground">TRANSFER</p>
+        <h1 className="font-display text-xl font-extrabold tracking-tight">이체 플랜</h1>
+      </div>
+
       <MonthSelector
         year={year}
         month={month}
@@ -31,7 +37,6 @@ export function TransferPlanPage({ monthNav }: TransferPlanPageProps) {
       />
 
       <ShortageStrategy warnings={warnings} savingsAvailable={savingsAvailable} />
-
       <TransferPlanList plans={transferPlans} />
     </div>
   );

@@ -3,7 +3,6 @@ import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useCardStore } from '@/stores/useCardStore';
@@ -24,19 +23,11 @@ export function CardManager() {
   });
 
   const resetForm = () => {
-    setForm({
-      name: '',
-      issuer: '',
-      paymentDay: '15',
-      linkedAccountId: '',
-    });
+    setForm({ name: '', issuer: '', paymentDay: '15', linkedAccountId: '' });
     setEditId(null);
   };
 
-  const openAdd = () => {
-    resetForm();
-    setIsOpen(true);
-  };
+  const openAdd = () => { resetForm(); setIsOpen(true); };
 
   const openEdit = (id: string) => {
     const card = cards.find((c) => c.id === id);
@@ -53,7 +44,6 @@ export function CardManager() {
 
   const handleSave = () => {
     if (!form.issuer || !form.linkedAccountId) return;
-
     const data = {
       name: form.name || form.issuer,
       issuer: form.issuer,
@@ -63,7 +53,6 @@ export function CardManager() {
       color: CARD_ISSUER_COLORS[form.issuer] || '#6B7280',
       isActive: true,
     };
-
     if (editId) {
       updateCard(editId, data);
     } else {
@@ -74,44 +63,59 @@ export function CardManager() {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">카드 관리</h3>
-        <Button size="sm" onClick={openAdd} className="rounded-lg">
-          <Plus className="mr-1 h-4 w-4" /> 추가
-        </Button>
-      </div>
-
+    <div className="space-y-2.5">
       {cards.length === 0 && (
-        <p className="text-sm text-muted-foreground py-4 text-center">등록된 카드가 없습니다.</p>
+        <div className="glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
+          등록된 카드가 없습니다.
+        </div>
       )}
 
       {cards.map((card) => (
-        <Card key={card.id} className={cn('rounded-xl', !card.isActive && 'opacity-50')}>
-          <CardContent className="flex items-center justify-between p-3">
-            <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full border" style={{ backgroundColor: card.color }} />
+        <div key={card.id} className={cn('glass-elevated rounded-2xl p-4 press-scale', !card.isActive && 'opacity-45')}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white text-[10px] font-bold"
+                style={{ backgroundColor: card.color }}
+              >
+                {card.name.slice(0, 2)}
+              </div>
               <div>
-                <p className="text-sm font-medium">{card.name}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm font-semibold">{card.name}</p>
+                <p className="text-[11px] text-muted-foreground">
                   {card.issuer} · 결제일 {card.paymentDay}일
                 </p>
               </div>
             </div>
-            <div className="flex gap-1">
-              <Button size="icon" variant="ghost" onClick={() => toggleActive(card.id)}>
-                <span className="text-xs">{card.isActive ? 'ON' : 'OFF'}</span>
-              </Button>
-              <Button size="icon" variant="ghost" onClick={() => openEdit(card.id)}>
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="ghost" onClick={() => deleteCard(card.id)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center gap-0.5">
+              <button
+                onClick={() => toggleActive(card.id)}
+                className={cn(
+                  'rounded-lg px-2 py-1 text-[10px] font-bold transition-colors',
+                  card.isActive
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-muted text-muted-foreground',
+                )}
+              >
+                {card.isActive ? 'ON' : 'OFF'}
+              </button>
+              <button onClick={() => openEdit(card.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+              <button onClick={() => deleteCard(card.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500 transition-colors">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
+
+      <button
+        onClick={openAdd}
+        className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 p-3.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+      >
+        <Plus className="h-4 w-4" /> 카드 추가
+      </button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
@@ -127,7 +131,7 @@ export function CardManager() {
                   {CARD_ISSUERS.map((issuer) => (
                     <SelectItem key={issuer} value={issuer}>
                       <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full border" style={{ backgroundColor: CARD_ISSUER_COLORS[issuer] || '#6B7280' }} />
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CARD_ISSUER_COLORS[issuer] || '#6B7280' }} />
                         {issuer}
                       </div>
                     </SelectItem>

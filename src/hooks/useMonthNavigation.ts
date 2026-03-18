@@ -14,23 +14,29 @@ export function useMonthNavigation() {
     }
   }, [month]);
 
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  const isCurrentMonth = year === currentYear && month === currentMonth;
+  const isFutureMonth = year > currentYear || (year === currentYear && month >= currentMonth);
+
   const goToNextMonth = useCallback(() => {
+    if (isFutureMonth) return;
     if (month === 12) {
       setYear((y) => y + 1);
       setMonth(1);
     } else {
       setMonth((m) => m + 1);
     }
-  }, [month]);
+  }, [month, isFutureMonth]);
 
   const goToCurrentMonth = useCallback(() => {
-    const now = new Date();
-    setYear(now.getFullYear());
-    setMonth(now.getMonth() + 1);
+    const n = new Date();
+    setYear(n.getFullYear());
+    setMonth(n.getMonth() + 1);
   }, []);
 
-  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
-  const canGoNext = !isCurrentMonth;
+  const canGoNext = !isFutureMonth;
 
   return {
     year,

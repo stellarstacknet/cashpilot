@@ -4,20 +4,23 @@ export function LoginPage() {
   const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-5">
-      <div className="w-full max-w-sm space-y-10 text-center">
+    <div className="mesh-gradient flex min-h-screen flex-col items-center justify-center px-6">
+      <div className="w-full max-w-sm space-y-12 text-center">
         <div>
-          <h1 className="font-display text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
-            CashPilot
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[22px] hero-gradient shadow-xl shadow-orange-500/20">
+            <span className="relative z-10 font-display text-3xl font-extrabold text-white">C</span>
+          </div>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight">
+            Cash<span className="text-primary">Pilot</span>
           </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground">
             카드 청구액 관리 대시보드
           </p>
         </div>
 
         <button
           onClick={signInWithGoogle}
-          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border/40 bg-card px-5 py-4 text-sm font-medium shadow-sm transition-all duration-200 active:scale-[0.98] hover:shadow-md"
+          className="glass-elevated flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm font-semibold transition-all duration-200 press-scale"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -28,7 +31,7 @@ export function LoginPage() {
           Google로 로그인
         </button>
 
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[11px] text-muted-foreground/60">
           로그인하면 모든 기기에서 데이터가 동기화됩니다.
         </p>
       </div>
