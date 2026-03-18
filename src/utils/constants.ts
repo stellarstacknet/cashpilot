@@ -84,7 +84,7 @@ export const ACCOUNT_PURPOSE_LABELS: Record<string, string> = {
 
 // 은행 로고 경로 (public/logos/)
 export const BANK_LOGOS: Record<string, string> = {
-  '신한은행': '/logos/shinhanbank.png',
+  '신한은행': '/logos/shinhan.png',
   'KB국민은행': '/logos/kb.png',
   '우리은행': '/logos/woori.png',
   '하나은행': '/logos/hana.png',
