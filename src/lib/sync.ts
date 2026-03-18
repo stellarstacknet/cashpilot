@@ -30,7 +30,7 @@ export async function pullFromSupabase() {
   }
 
   if (cardsRes.data) {
-    const cards: Card[] = cardsRes.data.map((c) => ({
+    const cards: Card[] = cardsRes.data.map((c, i) => ({
       id: c.id,
       name: c.name,
       issuer: c.issuer,
@@ -39,6 +39,7 @@ export async function pullFromSupabase() {
       overdueRate: Number(c.overdue_rate),
       color: c.color,
       isActive: c.is_active,
+      sortOrder: c.sort_order ?? i,
       createdAt: c.created_at,
       updatedAt: c.updated_at,
     }));
