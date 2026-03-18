@@ -61,7 +61,7 @@ export function AccountOverview({ year, month, expandedIds, onToggle }: AccountO
 
   return (
     <div className="space-y-3">
-      {accountData.map(({ account, linkedCards, billTotal, fixedTotal, totalDeductions, afterPayment, monthBills, accountFixedExpenses }) => {
+      {accountData.map(({ account, linkedCards, totalDeductions, afterPayment, monthBills, accountFixedExpenses }) => {
         const remainingRatio = account.balance > 0
           ? Math.max(0, Math.min((afterPayment / account.balance) * 100, 100))
           : 0;
