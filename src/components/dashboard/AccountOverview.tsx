@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
@@ -14,25 +15,27 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
   const cards = useCardStore((s) => s.cards);
   const bills = useBillStore((s) => s.bills);
 
+  const accountData = useMemo(() => {
+    const monthBills = bills.filter((b) => b.year === year && b.month === month);
+    const activeCards = cards.filter((c) => c.isActive);
+
+    return accounts.map((account) => {
+      const linkedCards = activeCards.filter((c) => c.linkedAccountId === account.id);
+      const billTotal = linkedCards.reduce((sum, card) => {
+        const bill = monthBills.find((b) => b.cardId === card.id);
+        return sum + (bill?.amount || 0);
+      }, 0);
+      const afterPayment = account.balance - billTotal;
+
+      return { account, linkedCards, billTotal, afterPayment, monthBills };
+    });
+  }, [accounts, cards, bills, year, month]);
+
   if (accounts.length === 0) return null;
-
-  const monthBills = bills.filter((b) => b.year === year && b.month === month);
-  const activeCards = cards.filter((c) => c.isActive);
-
-  const accountData = accounts.map((account) => {
-    const linkedCards = activeCards.filter((c) => c.linkedAccountId === account.id);
-    const billTotal = linkedCards.reduce((sum, card) => {
-      const bill = monthBills.find((b) => b.cardId === card.id);
-      return sum + (bill?.amount || 0);
-    }, 0);
-    const afterPayment = account.balance - billTotal;
-
-    return { account, linkedCards, billTotal, afterPayment };
-  });
 
   return (
     <div className="space-y-2.5">
-      {accountData.map(({ account, linkedCards, billTotal, afterPayment }) => (
+      {accountData.map(({ account, linkedCards, billTotal, afterPayment, monthBills }) => (
         <div key={account.id} className="glass-elevated rounded-2xl p-4 press-scale">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">

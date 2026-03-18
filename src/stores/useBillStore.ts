@@ -7,7 +7,6 @@ interface BillStore {
   bills: MonthlyBill[];
   setBill: (cardId: string, year: number, month: number, amount: number) => void;
   togglePaid: (id: string) => void;
-  updateMemo: (id: string, memo: string) => void;
   getBillsForMonth: (year: number, month: number) => MonthlyBill[];
   getBillForCard: (cardId: string, year: number, month: number) => MonthlyBill | undefined;
   reset: () => void;
@@ -54,13 +53,6 @@ export const useBillStore = create<BillStore>()(
         set((state) => ({
           bills: state.bills.map((b) =>
             b.id === id ? { ...b, isPaid: !b.isPaid, updatedAt: nowISO() } : b,
-          ),
-        })),
-
-      updateMemo: (id, memo) =>
-        set((state) => ({
-          bills: state.bills.map((b) =>
-            b.id === id ? { ...b, memo, updatedAt: nowISO() } : b,
           ),
         })),
 

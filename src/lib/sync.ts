@@ -4,8 +4,9 @@ import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
 import type { Account, Card, MonthlyBill } from '@/types';
 
-// DB → 로컬 스토어로 데이터 로드
 export async function pullFromSupabase() {
+  if (!navigator.onLine) return;
+
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
@@ -61,8 +62,9 @@ export async function pullFromSupabase() {
   }
 }
 
-// 로컬 스토어 → DB로 데이터 푸시
 export async function pushToSupabase() {
+  if (!navigator.onLine) return;
+
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
@@ -70,7 +72,6 @@ export async function pushToSupabase() {
   const cards = useCardStore.getState().cards;
   const bills = useBillStore.getState().bills;
 
-  // 계좌 동기화
   for (const a of accounts) {
     await supabase.from('accounts').upsert({
       id: a.id,
@@ -83,7 +84,6 @@ export async function pushToSupabase() {
     }, { onConflict: 'id' });
   }
 
-  // 카드 동기화
   for (const c of cards) {
     await supabase.from('cards').upsert({
       id: c.id,
@@ -98,7 +98,6 @@ export async function pushToSupabase() {
     }, { onConflict: 'id' });
   }
 
-  // 청구서 동기화
   for (const b of bills) {
     await supabase.from('bills').upsert({
       id: b.id,
@@ -112,18 +111,23 @@ export async function pushToSupabase() {
   }
 }
 
-// 스토어 변경 감지 → 자동 동기화
 let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 
-export function debouncedSync() {
+function debouncedSync() {
   if (syncTimeout) clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => {
     pushToSupabase();
   }, 1500);
 }
 
+let unsubscribers: (() => void)[] = [];
+
 export function setupAutoSync() {
-  useAccountStore.subscribe(debouncedSync);
-  useCardStore.subscribe(debouncedSync);
-  useBillStore.subscribe(debouncedSync);
+  // 기존 구독 해제 후 재등록 (중복 방지)
+  unsubscribers.forEach((unsub) => unsub());
+  unsubscribers = [
+    useAccountStore.subscribe(debouncedSync),
+    useCardStore.subscribe(debouncedSync),
+    useBillStore.subscribe(debouncedSync),
+  ];
 }

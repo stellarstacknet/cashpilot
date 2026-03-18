@@ -47,7 +47,7 @@ export function CardManager() {
     const data = {
       name: form.name || form.issuer,
       issuer: form.issuer,
-      paymentDay: parseInt(form.paymentDay) || 15,
+      paymentDay: Math.max(1, Math.min(28, parseInt(form.paymentDay) || 15)),
       linkedAccountId: form.linkedAccountId,
       overdueRate: 19.9,
       color: CARD_ISSUER_COLORS[form.issuer] || '#6B7280',

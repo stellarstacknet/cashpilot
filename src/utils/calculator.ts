@@ -153,7 +153,7 @@ function getEarliestDueDay(
 ): number {
   const entries = cardMap[accountId] || [];
   if (entries.length === 0) return 28;
-  return Math.min(...entries.map((e) => e.card.paymentDay));
+  return Math.min(28, Math.max(1, Math.min(...entries.map((e) => e.card.paymentDay))));
 }
 
 // 타임라인 이벤트 생성 (청구 이벤트만)

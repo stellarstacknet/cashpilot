@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { TransferPlan } from '@/types';
 import { TransferPlanItem } from './TransferPlanItem';
 import { formatWon } from '@/utils/formatter';
@@ -11,9 +11,9 @@ interface TransferPlanListProps {
 export function TransferPlanList({ plans: initialPlans }: TransferPlanListProps) {
   const [plans, setPlans] = useState(initialPlans);
 
-  if (initialPlans !== plans && initialPlans.length !== plans.length) {
+  useEffect(() => {
     setPlans(initialPlans);
-  }
+  }, [initialPlans]);
 
   const handleMarkDone = (id: string) => {
     setPlans((prev) =>
