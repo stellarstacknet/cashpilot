@@ -110,45 +110,38 @@ export function AccountManager() {
         return (
           <div key={account.id} className="card-elevated overflow-hidden">
             <div
-              className="px-5 pt-5 pb-4 cursor-pointer"
+              className="flex items-center gap-3.5 p-5 cursor-pointer press-scale"
               onClick={() => setExpandedId(isExpanded ? null : account.id)}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3.5">
-                  {/* 은행 로고 */}
-                  {getBankLogo(account.bank) ? (
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
-                      <img src={getBankLogo(account.bank)} alt={account.bank} className="h-full w-full object-contain" />
-                    </div>
-                  ) : (
-                    <div
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white text-[11px] font-extrabold"
-                      style={{ backgroundColor: BANK_COLORS[account.bank] || '#6B7280' }}
-                    >
-                      {account.bank.slice(0, 2)}
-                    </div>
-                  )}
-
-                  <div>
-                    <p className="text-[15px] font-extrabold">{account.bank}</p>
-                    <p className="text-[12px] text-muted-foreground mt-0.5">
-                      {ACCOUNT_PURPOSE_LABELS[account.purpose]}
-                    </p>
-                  </div>
+              {getBankLogo(account.bank) ? (
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+                  <img src={getBankLogo(account.bank)} alt={account.bank} className="h-full w-full object-contain" />
                 </div>
-
+              ) : (
+                <div
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white text-[11px] font-extrabold"
+                  style={{ backgroundColor: BANK_COLORS[account.bank] || '#6B7280' }}
+                >
+                  {account.bank.slice(0, 2)}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-[15px] font-extrabold truncate">{account.bank}</p>
+                <p className="text-[12px] text-muted-foreground mt-0.5">
+                  {ACCOUNT_PURPOSE_LABELS[account.purpose]}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="text-right">
+                  <p className="font-display text-[18px] font-black tabular-nums tracking-tight">
+                    {formatWon(account.balance)}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">잔액</p>
+                </div>
                 <ChevronRight className={cn(
-                  'h-4 w-4 text-muted-foreground/50 mt-1 transition-transform duration-200',
+                  'h-4 w-4 text-muted-foreground/50 transition-transform duration-200',
                   isExpanded && 'rotate-90',
                 )} />
-              </div>
-
-              {/* 잔액 */}
-              <div className="mt-4 pt-3.5 border-t border-border/40">
-                <p className="text-[12px] text-muted-foreground">잔액</p>
-                <p className="font-display text-[22px] font-extrabold tabular-nums tracking-tight mt-1">
-                  {formatWon(account.balance)}
-                </p>
               </div>
             </div>
 

@@ -110,54 +110,39 @@ export function CardManager() {
               !card.isActive && 'opacity-40',
             )}
           >
-            {/* 미니 카드 비주얼 */}
             <div
-              className="relative px-5 pt-5 pb-4 cursor-pointer"
+              className="flex items-center gap-3.5 p-5 cursor-pointer press-scale"
               onClick={() => setExpandedId(isExpanded ? null : card.id)}
             >
-              <div className="flex items-start justify-between">
-                {/* 카드 이미지 + 정보 */}
-                <div className="flex items-center gap-3.5">
-                  {getCardLogo(card.issuer) ? (
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
-                      <img src={getCardLogo(card.issuer)} alt={card.issuer} className="h-full w-full object-contain" />
-                    </div>
-                  ) : (
-                    <div
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white text-[11px] font-extrabold"
-                      style={{ backgroundColor: card.color }}
-                    >
-                      {card.issuer.slice(0, 2)}
-                    </div>
-                  )}
-
-                  <div>
-                    <p className="text-[15px] font-extrabold">{card.name}</p>
-                    <p className="text-[12px] text-muted-foreground mt-0.5">
-                      {card.issuer}
-                    </p>
-                  </div>
+              {getCardLogo(card.issuer) ? (
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+                  <img src={getCardLogo(card.issuer)} alt={card.issuer} className="h-full w-full object-contain" />
                 </div>
-
+              ) : (
+                <div
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white text-[11px] font-extrabold"
+                  style={{ backgroundColor: card.color }}
+                >
+                  {card.issuer.slice(0, 2)}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-[15px] font-extrabold truncate">{card.name}</p>
+                <p className="text-[12px] text-muted-foreground mt-0.5">
+                  {card.issuer} · {card.paymentDay}일 결제
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="text-right">
+                  <p className="font-display text-[18px] font-black tabular-nums tracking-tight">
+                    {formatWon(bill?.amount || 0)}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{currentMonth}월 청구</p>
+                </div>
                 <ChevronRight className={cn(
-                  'h-4 w-4 text-muted-foreground/50 mt-1 transition-transform duration-200',
+                  'h-4 w-4 text-muted-foreground/50 transition-transform duration-200',
                   isExpanded && 'rotate-90',
                 )} />
-              </div>
-
-              {/* 이번 달 청구액 */}
-              <div className="mt-4 pt-3.5 border-t border-border/40">
-                <div className="flex items-center justify-between">
-                  <p className="text-[12px] text-muted-foreground">
-                    {currentMonth}월 청구액
-                  </p>
-                  <p className="text-[12px] text-muted-foreground">
-                    결제일 {card.paymentDay}일
-                  </p>
-                </div>
-                <p className="font-display text-[20px] font-extrabold tabular-nums tracking-tight mt-1">
-                  {formatWon(bill?.amount || 0)}
-                </p>
               </div>
             </div>
 
