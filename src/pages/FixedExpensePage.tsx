@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Plus, Pencil, Trash2, ChevronRight, Tv, Phone, Droplets, Package, Shield } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
@@ -62,6 +62,7 @@ export function FixedExpensePage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedCategories, setExpandedCategories] = useState<Set<FixedExpenseCategory>>(new Set());
   const [form, setForm] = useState({
     name: '',
     amount: '',
@@ -92,6 +93,35 @@ export function FixedExpensePage() {
       }))
       .sort((a, b) => b.amount - a.amount);
   }, [expenses, totalMonthly]);
+
+  const groupedByCategory = useMemo(() => {
+    const order: FixedExpenseCategory[] = ['subscription', 'telecom', 'utility', 'rental', 'insurance'];
+    const map = new Map<FixedExpenseCategory, typeof expenses>();
+    for (const e of expenses) {
+      const list = map.get(e.category) || [];
+      list.push(e);
+      map.set(e.category, list);
+    }
+    return order
+      .filter((cat) => map.has(cat))
+      .map((cat) => ({
+        category: cat,
+        label: CATEGORY_LABELS[cat],
+        color: CATEGORY_COLORS[cat],
+        icon: CATEGORY_ICONS[cat],
+        items: map.get(cat)!,
+        total: map.get(cat)!.reduce((sum, e) => sum + e.amount, 0),
+      }));
+  }, [expenses]);
+
+  const toggleCategory = useCallback((cat: FixedExpenseCategory) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return next;
+    });
+  }, []);
 
   const resetForm = () => {
     setForm({ name: '', amount: '', category: 'subscription', payMethod: 'card', cardId: '', accountId: '', payDay: '1' });
@@ -234,110 +264,143 @@ export function FixedExpensePage() {
         </div>
       )}
 
-      {/* 고정비 목록 */}
-      {expenses.length > 0 && (
-        <section>
-          <h2 className="section-label mb-4">항목 목록</h2>
-          <div className="space-y-3">
-            {expenses.map((expense) => {
-              const isExpanded = expandedId === expense.id;
-              const CategoryIcon = CATEGORY_ICONS[expense.category];
-              const linkedCard = getLinkedCard(expense.cardId);
-              const linkedAccount = getLinkedAccount(expense.accountId);
+      {/* 카테고리별 그룹 목록 */}
+      {groupedByCategory.map((group) => {
+        const isCatExpanded = expandedCategories.has(group.category);
+        const GroupIcon = group.icon;
 
-              return (
-                <div key={expense.id} className="card-elevated overflow-hidden">
-                  <div
-                    className="flex items-center gap-3.5 p-5 cursor-pointer press-scale"
-                    onClick={() => setExpandedId(isExpanded ? null : expense.id)}
-                  >
-                    <div
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                      style={{ backgroundColor: CATEGORY_COLORS[expense.category] }}
-                    >
-                      <CategoryIcon className="h-5 w-5 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[15px] font-extrabold truncate">{expense.name}</p>
-                      <p className="text-[12px] text-muted-foreground mt-0.5">
-                        {CATEGORY_LABELS[expense.category]} · 매달 {expense.payDay}일
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-display text-[18px] font-black tabular-nums tracking-tight">
-                        {formatWon(expense.amount)}
-                      </p>
-                      <ChevronRight className={cn(
-                        'h-4 w-4 text-muted-foreground/50 transition-transform duration-200',
-                        isExpanded && 'rotate-90',
-                      )} />
-                    </div>
-                  </div>
+        return (
+          <section key={group.category}>
+            {/* 카테고리 헤더 */}
+            <div
+              className="flex items-center justify-between mb-3 cursor-pointer press-scale"
+              onClick={() => toggleCategory(group.category)}
+            >
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: group.color }}
+                >
+                  <GroupIcon className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-[15px] font-extrabold">{group.label}</p>
+                  <p className="text-[11px] text-muted-foreground">{group.items.length}건</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <p className="text-[15px] font-extrabold tabular-nums">{formatWon(group.total)}</p>
+                <ChevronRight className={cn(
+                  'h-4 w-4 text-muted-foreground/50 transition-transform duration-200',
+                  isCatExpanded && 'rotate-90',
+                )} />
+              </div>
+            </div>
 
-                  {/* 확장 영역 */}
-                  <div
-                    className={cn(
-                      'grid transition-all duration-300 ease-out',
-                      isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
-                    )}
-                  >
-                    <div className="overflow-hidden">
-                      <div className="border-t border-border/40 bg-muted/30">
-                        <div className="px-5 py-3.5">
-                          <div className="flex justify-between text-[12px]">
-                            <span className="text-muted-foreground">결제 수단</span>
-                            <span className="font-semibold flex items-center gap-1.5">
-                              {linkedCard ? (
-                                <>
-                                  {getCardLogo(linkedCard.issuer) && (
-                                    <img src={getCardLogo(linkedCard.issuer)!} alt="" className="h-4 w-4 rounded object-contain" />
-                                  )}
-                                  {linkedCard.name}
-                                </>
-                              ) : linkedAccount ? (
-                                <>
-                                  {getBankLogo(linkedAccount.bank) ? (
-                                    <img src={getBankLogo(linkedAccount.bank)!} alt="" className="h-4 w-4 rounded object-contain" />
-                                  ) : (
-                                    <span
-                                      className="inline-flex h-4 w-4 items-center justify-center rounded text-[7px] font-extrabold text-white"
-                                      style={{ backgroundColor: BANK_COLORS[linkedAccount.bank] || '#6B7280' }}
-                                    >
-                                      {linkedAccount.bank.slice(0, 1)}
-                                    </span>
-                                  )}
-                                  {linkedAccount.bank}
-                                </>
-                              ) : (
-                                PAY_METHOD_LABELS[expense.payMethod]
-                              )}
-                            </span>
+            {/* 카테고리 항목 목록 (접기/펼치기) */}
+            <div
+              className={cn(
+                'grid transition-all duration-300 ease-out',
+                isCatExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="space-y-2.5 pb-4">
+                  {group.items.map((expense) => {
+                    const isItemExpanded = expandedId === expense.id;
+                    const linkedCard = getLinkedCard(expense.cardId);
+                    const linkedAccount = getLinkedAccount(expense.accountId);
+
+                    return (
+                      <div key={expense.id} className="card-elevated overflow-hidden">
+                        <div
+                          className="flex items-center gap-3.5 px-4 py-3.5 cursor-pointer press-scale"
+                          onClick={() => setExpandedId(isItemExpanded ? null : expense.id)}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[14px] font-bold truncate">{expense.name}</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">
+                              매달 {expense.payDay}일 · {PAY_METHOD_LABELS[expense.payMethod]}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-display text-[16px] font-extrabold tabular-nums tracking-tight">
+                              {formatWon(expense.amount)}
+                            </p>
+                            <ChevronRight className={cn(
+                              'h-3.5 w-3.5 text-muted-foreground/50 transition-transform duration-200',
+                              isItemExpanded && 'rotate-90',
+                            )} />
                           </div>
                         </div>
 
-                        <div className="flex border-t border-border/40">
-                          <button
-                            onClick={() => openEdit(expense.id)}
-                            className="flex-1 py-3 text-[13px] font-bold text-center border-r border-border/40 transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
-                          >
-                            <Pencil className="h-3.5 w-3.5" /> 수정
-                          </button>
-                          <button
-                            onClick={() => setDeleteTarget(expense.id)}
-                            className="flex-1 py-3 text-[13px] font-bold text-muted-foreground text-center transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" /> 삭제
-                          </button>
+                        {/* 항목 확장 영역 */}
+                        <div
+                          className={cn(
+                            'grid transition-all duration-300 ease-out',
+                            isItemExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+                          )}
+                        >
+                          <div className="overflow-hidden">
+                            <div className="border-t border-border/40 bg-muted/30">
+                              <div className="px-4 py-3">
+                                <div className="flex justify-between text-[12px]">
+                                  <span className="text-muted-foreground">결제 수단</span>
+                                  <span className="font-semibold flex items-center gap-1.5">
+                                    {linkedCard ? (
+                                      <>
+                                        {getCardLogo(linkedCard.issuer) && (
+                                          <img src={getCardLogo(linkedCard.issuer)!} alt="" className="h-4 w-4 rounded object-contain" />
+                                        )}
+                                        {linkedCard.name}
+                                      </>
+                                    ) : linkedAccount ? (
+                                      <>
+                                        {getBankLogo(linkedAccount.bank) ? (
+                                          <img src={getBankLogo(linkedAccount.bank)!} alt="" className="h-4 w-4 rounded object-contain" />
+                                        ) : (
+                                          <span
+                                            className="inline-flex h-4 w-4 items-center justify-center rounded text-[7px] font-extrabold text-white"
+                                            style={{ backgroundColor: BANK_COLORS[linkedAccount.bank] || '#6B7280' }}
+                                          >
+                                            {linkedAccount.bank.slice(0, 1)}
+                                          </span>
+                                        )}
+                                        {linkedAccount.bank}
+                                      </>
+                                    ) : (
+                                      PAY_METHOD_LABELS[expense.payMethod]
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="flex border-t border-border/40">
+                                <button
+                                  onClick={() => openEdit(expense.id)}
+                                  className="flex-1 py-2.5 text-[13px] font-bold text-center border-r border-border/40 transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                                >
+                                  <Pencil className="h-3.5 w-3.5" /> 수정
+                                </button>
+                                <button
+                                  onClick={() => setDeleteTarget(expense.id)}
+                                  className="flex-1 py-2.5 text-[13px] font-bold text-muted-foreground text-center transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" /> 삭제
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
+              </div>
+            </div>
+          </section>
+        );
+      })}
 
       {/* 추가 버튼 */}
       <button
