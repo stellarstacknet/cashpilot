@@ -68,8 +68,8 @@ export function dbSaveAccount(account: Account) {
   });
 }
 
-export function dbSaveAccounts(accounts: Account[]) {
-  dbBatchUpsert('accounts', accounts.map((a) => ({
+export function dbSaveAccounts(accounts: Account[]): Promise<void> {
+  return dbBatchUpsert('accounts', accounts.map((a) => ({
     id: a.id,
     name: a.bank,
     bank: a.bank,
@@ -99,8 +99,8 @@ export function dbSaveCard(card: Card) {
   });
 }
 
-export function dbSaveCards(cards: Card[]) {
-  dbBatchUpsert('cards', cards.map((c) => ({
+export function dbSaveCards(cards: Card[]): Promise<void> {
+  return dbBatchUpsert('cards', cards.map((c) => ({
     id: c.id,
     name: c.name,
     issuer: c.issuer,
@@ -119,8 +119,8 @@ export function dbDeleteCard(id: string) {
 
 // ── Bills ──
 
-export function dbSaveBill(bill: MonthlyBill) {
-  dbUpsert('bills', {
+export function dbSaveBill(bill: MonthlyBill): Promise<void> {
+  return dbUpsert('bills', {
     id: bill.id,
     card_id: bill.cardId,
     year: bill.year,
@@ -150,8 +150,8 @@ export function dbSaveFixedExpense(expense: FixedExpense) {
   });
 }
 
-export function dbSaveFixedExpenses(expenses: FixedExpense[]) {
-  dbBatchUpsert('fixed_expenses', expenses.map((f) => ({
+export function dbSaveFixedExpenses(expenses: FixedExpense[]): Promise<void> {
+  return dbBatchUpsert('fixed_expenses', expenses.map((f) => ({
     id: f.id,
     name: f.name,
     amount: f.amount,

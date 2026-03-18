@@ -49,26 +49,33 @@ export function DataManagement() {
     try {
       const data = await importData(file) as Record<string, unknown>;
 
+      // 1단계: 계좌 먼저 저장 (다른 테이블이 참조)
       if (Array.isArray(data.accounts)) {
         const accounts = data.accounts as Account[];
         useAccountStore.setState({ accounts });
-        dbSaveAccounts(accounts);
+        await dbSaveAccounts(accounts);
       }
+
+      // 2단계: 카드 저장 (계좌 참조, 청구서가 참조)
       if (Array.isArray(data.cards)) {
         const cards = data.cards as Card[];
         useCardStore.setState({ cards });
-        dbSaveCards(cards);
+        await dbSaveCards(cards);
       }
+
+      // 3단계: 청구서 + 고정비 병렬 저장
+      const promises: Promise<void>[] = [];
       if (Array.isArray(data.bills)) {
         const bills = data.bills as MonthlyBill[];
         useBillStore.setState({ bills });
-        for (const bill of bills) dbSaveBill(bill);
+        for (const bill of bills) promises.push(dbSaveBill(bill));
       }
       if (Array.isArray(data.fixedExpenses)) {
         const expenses = data.fixedExpenses as FixedExpense[];
         useFixedExpenseStore.setState({ expenses });
-        dbSaveFixedExpenses(expenses);
+        promises.push(dbSaveFixedExpenses(expenses));
       }
+      await Promise.all(promises);
 
       alert('데이터를 가져오고 서버에 저장했어요!');
     } catch {
