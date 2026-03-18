@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { LoginPage } from '@/components/auth/LoginPage';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { pullFromSupabase, setupAutoSync } from '@/lib/sync';
+import { pushToSupabase, pullFromSupabase, setupAutoSync } from '@/lib/sync';
 import { startNotificationScheduler } from '@/utils/notifications';
 
 function App() {
@@ -19,7 +19,9 @@ function App() {
   // 로그인 후 Supabase 데이터 동기화 + 자동 동기화 설정
   useEffect(() => {
     if (user) {
-      pullFromSupabase().then(() => {
+      pushToSupabase().then(() => {
+        return pullFromSupabase();
+      }).then(() => {
         setupAutoSync();
       });
     }
