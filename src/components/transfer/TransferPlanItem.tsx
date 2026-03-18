@@ -30,7 +30,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
           <span className={cn(
             'flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-bold',
             plan.priority === 1
-              ? 'bg-foreground text-background'
+              ? 'bg-primary text-primary-foreground'
               : 'bg-muted text-muted-foreground',
           )}>
             {plan.priority}
@@ -67,7 +67,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
           <Button
             size="sm"
             onClick={() => onMarkDone(plan.id)}
-            className="rounded-xl bg-foreground text-background text-xs h-8 px-4 hover:bg-foreground/90"
+            className="rounded-xl bg-primary text-primary-foreground text-xs h-8 px-4 hover:bg-primary/90"
           >
             완료 처리
           </Button>

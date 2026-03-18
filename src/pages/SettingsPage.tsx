@@ -1,26 +1,17 @@
-import { Download, LogOut, RefreshCw, Check, Sun, Moon, Monitor, Bell, BellOff } from 'lucide-react';
+import { Download, LogOut, RefreshCw, Check, Bell, BellOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataManagement } from '@/components/settings/DataManagement';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { pullFromSupabase, pushToSupabase } from '@/lib/sync';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { useTheme } from '@/hooks/useTheme';
 import { getNotificationStatus, requestNotificationPermission } from '@/utils/notifications';
 import { useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-
-// 테마 선택 옵션
-const THEME_OPTIONS = [
-  { value: 'light' as const, label: '라이트', icon: Sun },
-  { value: 'dark' as const, label: '다크', icon: Moon },
-  { value: 'system' as const, label: '시스템', icon: Monitor },
-];
 
 export function SettingsPage() {
   const { user, signOut } = useAuthStore();
   const [syncing, setSyncing] = useState(false);
   const { canInstall, isInstalled, isIOS, install } = usePWAInstall();
-  const { theme, setTheme } = useTheme();
   const [notifStatus, setNotifStatus] = useState(getNotificationStatus);
 
   const handleSync = async () => {
@@ -81,28 +72,6 @@ export function SettingsPage() {
         </div>
       )}
 
-      {/* 테마 설정 */}
-      <div className="card-elevated p-5">
-        <p className="text-[15px] font-bold mb-4">테마</p>
-        <div className="flex gap-2">
-          {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
-            <button
-              key={value}
-              onClick={() => setTheme(value)}
-              className={cn(
-                'flex flex-1 flex-col items-center gap-2 rounded-2xl p-4 text-[13px] font-semibold transition-all duration-200',
-                theme === value
-                  ? 'bg-foreground/10 text-foreground ring-1 ring-foreground/15'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted',
-              )}
-            >
-              <Icon className="h-5 w-5" />
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* 알림 설정 */}
       <div className="card-elevated p-5">
         <div className="flex items-center justify-between">
@@ -126,7 +95,7 @@ export function SettingsPage() {
             <Button
               size="sm"
               onClick={handleEnableNotifications}
-              className="rounded-xl bg-foreground text-background text-[13px] h-9"
+              className="rounded-xl bg-primary text-primary-foreground text-[13px] h-9"
             >
               <Bell className="mr-1.5 h-3.5 w-3.5" /> 허용
             </Button>
@@ -155,7 +124,7 @@ export function SettingsPage() {
             <Button
               size="sm"
               onClick={install}
-              className="rounded-xl bg-foreground text-background text-[13px] h-9"
+              className="rounded-xl bg-primary text-primary-foreground text-[13px] h-9"
             >
               <Download className="mr-1.5 h-3.5 w-3.5" />설치
             </Button>

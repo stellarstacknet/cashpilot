@@ -44,21 +44,6 @@ export interface MonthlyBill {
   updatedAt: string;
 }
 
-// ── 수입 인터페이스 ──
-// 현재 UI에서 직접 사용하지 않으나, 데이터 import/export 호환을 위해 유지
-export interface Income {
-  id: string;
-  name: string;          // 수입명
-  amount: number;        // 금액
-  depositDay: number;    // 입금일
-  accountId: string;     // 입금 계좌 ID
-  isConfirmed: boolean;  // 확정 여부
-  isRecurring: boolean;  // 반복 여부
-  isActive: boolean;     // 활성 여부
-  createdAt: string;
-  updatedAt: string;
-}
-
 // ── 이체 플랜 인터페이스 (자동 계산 결과) ──
 export interface TransferPlan {
   id: string;
@@ -71,19 +56,6 @@ export interface TransferPlan {
   priority: number;      // 우선순위 (1이 가장 높음)
   reason: string;        // 이체 사유
   status: TransferStatus; // 처리 상태
-}
-
-// ── 월별 스냅샷 인터페이스 (히스토리용) ──
-// 현재 UI에서 직접 사용하지 않으나, 데이터 import/export 호환을 위해 유지
-export interface MonthlySnapshot {
-  id: string;
-  year: number;
-  month: number;
-  totalIncome: number;   // 총 수입
-  totalBills: number;    // 총 지출
-  totalSavings: number;  // 총 저축
-  bills: MonthlyBill[];  // 청구 내역 스냅샷
-  createdAt: string;
 }
 
 // ── 이체 계산 결과 인터페이스 ──

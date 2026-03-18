@@ -69,20 +69,27 @@ export function BillInputCard({
       'card-elevated p-5 press-scale transition-all',
       hasAmount && 'ring-1 ring-foreground/10',
     )}>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3.5">
+        {/* 미니 카드 비주얼 */}
         <div
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white text-[10px] font-bold"
+          className="relative h-[52px] w-[82px] shrink-0 rounded-xl overflow-hidden"
           style={{ backgroundColor: card.color }}
         >
-          {card.name.slice(0, 2)}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+          <div className="absolute left-3 top-2.5 h-[10px] w-[14px] rounded-[2px] bg-white/40" />
+          <div className="absolute bottom-2 left-3 right-3">
+            <p className="text-[7px] font-bold text-white/80 tracking-wider truncate">
+              {card.name}
+            </p>
+          </div>
         </div>
+
         <div className="flex-1 min-w-0">
-          <span className="text-sm font-semibold truncate block">{card.name}</span>
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-[15px] font-bold truncate block">{card.name}</span>
+          <span className="text-[12px] text-muted-foreground">
             {linkedAccount ? `${linkedAccount.bank}` : ''} · {card.paymentDay}일 결제
           </span>
         </div>
-        {/* 입력 완료 체크 애니메이션 */}
         {showCheck && (
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground/10 animate-in fade-in zoom-in duration-300">
             <Check className="h-3.5 w-3.5 text-foreground" />

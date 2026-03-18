@@ -1,38 +1,19 @@
 // 자산 관리 페이지
-// 서브 탭: 이체 플랜 | 계좌 | 카드
+// 서브 탭: 계좌 | 카드
 import { useState } from 'react';
-import { MonthSelector } from '@/components/layout/MonthSelector';
 import { AccountManager } from '@/components/settings/AccountManager';
 import { CardManager } from '@/components/settings/CardManager';
-import { TransferPlanList } from '@/components/transfer/TransferPlanList';
-import { ShortageStrategy } from '@/components/transfer/ShortageStrategy';
-import { useTransferPlan } from '@/hooks/useTransferPlan';
 import { cn } from '@/lib/utils';
 
-type SubTab = 'transfer' | 'accounts' | 'cards';
-
-interface AssetsPageProps {
-  monthNav: {
-    year: number;
-    month: number;
-    goToPrevMonth: () => void;
-    goToNextMonth: () => void;
-    goToCurrentMonth: () => void;
-    isCurrentMonth: boolean;
-    canGoNext: boolean;
-  };
-}
+type SubTab = 'accounts' | 'cards';
 
 const SUB_TABS: { id: SubTab; label: string }[] = [
-  { id: 'transfer', label: '이체 플랜' },
   { id: 'accounts', label: '계좌' },
   { id: 'cards', label: '카드' },
 ];
 
-export function AssetsPage({ monthNav }: AssetsPageProps) {
-  const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth, canGoNext } = monthNav;
-  const { transferPlans, warnings, savingsAvailable } = useTransferPlan(year, month);
-  const [subTab, setSubTab] = useState<SubTab>('transfer');
+export function AssetsPage() {
+  const [subTab, setSubTab] = useState<SubTab>('accounts');
 
   return (
     <div className="space-y-7">
@@ -50,7 +31,7 @@ export function AssetsPage({ monthNav }: AssetsPageProps) {
             className={cn(
               'flex-1 rounded-[14px] py-2.5 text-[13px] font-semibold transition-all duration-200',
               subTab === id
-                ? 'bg-foreground text-background shadow-md'
+                ? 'bg-primary text-primary-foreground shadow-md'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
             )}
           >
@@ -58,22 +39,6 @@ export function AssetsPage({ monthNav }: AssetsPageProps) {
           </button>
         ))}
       </div>
-
-      {subTab === 'transfer' && (
-        <div className="space-y-5">
-          <MonthSelector
-            year={year}
-            month={month}
-            onPrev={goToPrevMonth}
-            onNext={goToNextMonth}
-            onToday={goToCurrentMonth}
-            isCurrentMonth={isCurrentMonth}
-            canGoNext={canGoNext}
-          />
-          <ShortageStrategy warnings={warnings} savingsAvailable={savingsAvailable} />
-          <TransferPlanList plans={transferPlans} year={year} month={month} />
-        </div>
-      )}
 
       {subTab === 'accounts' && <AccountManager />}
       {subTab === 'cards' && <CardManager />}

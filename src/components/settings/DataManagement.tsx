@@ -16,8 +16,6 @@ import {
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
-import { useIncomeStore } from '@/stores/useIncomeStore';
-import { useSnapshotStore } from '@/stores/useSnapshotStore';
 import { useTransferStatusStore } from '@/stores/useTransferStatusStore';
 import { exportData, importData } from '@/utils/dataExport';
 import { APP_VERSION } from '@/utils/constants';
@@ -27,8 +25,6 @@ export function DataManagement() {
   const accountStore = useAccountStore();
   const cardStore = useCardStore();
   const billStore = useBillStore();
-  const incomeStore = useIncomeStore();
-  const snapshotStore = useSnapshotStore();
 
   const handleExport = () => {
     const data = {
@@ -37,8 +33,6 @@ export function DataManagement() {
       accounts: accountStore.accounts,
       cards: cardStore.cards,
       bills: billStore.bills,
-      incomes: incomeStore.incomes,
-      snapshots: snapshotStore.snapshots,
     };
     const filename = `cashpilot-backup-${new Date().toISOString().slice(0, 10)}.json`;
     exportData(data, filename);
@@ -60,12 +54,6 @@ export function DataManagement() {
       if (Array.isArray(data.bills)) {
         useBillStore.setState({ bills: data.bills as never });
       }
-      if (Array.isArray(data.incomes)) {
-        useIncomeStore.setState({ incomes: data.incomes as never });
-      }
-      if (Array.isArray(data.snapshots)) {
-        useSnapshotStore.setState({ snapshots: data.snapshots as never });
-      }
 
       alert('데이터를 성공적으로 가져왔습니다!');
     } catch {
@@ -77,13 +65,10 @@ export function DataManagement() {
     }
   };
 
-  // 모든 데이터 초기화 (이체 상태 포함)
   const handleReset = () => {
     accountStore.reset();
     cardStore.reset();
     billStore.reset();
-    incomeStore.reset();
-    snapshotStore.reset();
     useTransferStatusStore.getState().reset();
   };
 
@@ -139,7 +124,7 @@ export function DataManagement() {
             <AlertDialogHeader>
               <AlertDialogTitle>모든 데이터를 초기화할까요?</AlertDialogTitle>
               <AlertDialogDescription>
-                모든 계좌, 카드, 청구서, 수입, 히스토리 데이터가 영구적으로 삭제됩니다.
+                모든 계좌, 카드, 청구서 데이터가 영구적으로 삭제됩니다.
                 이 작업은 되돌릴 수 없습니다.
               </AlertDialogDescription>
             </AlertDialogHeader>

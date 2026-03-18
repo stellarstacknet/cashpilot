@@ -2,30 +2,29 @@ import { useState, useRef } from 'react';
 import { TabNavigation, type TabId } from './TabNavigation';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { BillsPage } from '@/pages/BillsPage';
+import { TransferPage } from '@/pages/TransferPage';
 import { AssetsPage } from '@/pages/AssetsPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { useMonthNavigation } from '@/hooks/useMonthNavigation';
 import { useSwipe } from '@/hooks/useSwipe';
 
-// 앱 쉘 컴포넌트
-// 탭 네비게이션, 월 이동, 스와이프 제스처, 페이지 전환 애니메이션 관리
 export function AppShell() {
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const monthNav = useMonthNavigation();
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
   const slideKey = useRef(0);
 
-  // 스와이프로 월 이동 (대시보드/청구서/자산 탭에서만 작동)
+  // 스와이프로 월 이동 (대시보드/청구서/이체 탭에서만 작동)
   const swipeHandlers = useSwipe({
     onSwipeLeft: () => {
-      if (['dashboard', 'bills', 'assets'].includes(activeTab) && monthNav.canGoNext) {
+      if (['dashboard', 'bills', 'transfer'].includes(activeTab) && monthNav.canGoNext) {
         setSlideDirection('left');
         slideKey.current++;
         monthNav.goToNextMonth();
       }
     },
     onSwipeRight: () => {
-      if (['dashboard', 'bills', 'assets'].includes(activeTab)) {
+      if (['dashboard', 'bills', 'transfer'].includes(activeTab)) {
         setSlideDirection('right');
         slideKey.current++;
         monthNav.goToPrevMonth();
@@ -39,14 +38,15 @@ export function AppShell() {
         return <DashboardPage monthNav={monthNav} />;
       case 'bills':
         return <BillsPage monthNav={monthNav} />;
+      case 'transfer':
+        return <TransferPage monthNav={monthNav} />;
       case 'assets':
-        return <AssetsPage monthNav={monthNav} />;
+        return <AssetsPage />;
       case 'settings':
         return <SettingsPage />;
     }
   };
 
-  // 슬라이드 방향에 따른 CSS 클래스 결정
   const slideClass = slideDirection === 'left'
     ? 'slide-left'
     : slideDirection === 'right'

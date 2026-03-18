@@ -1,10 +1,12 @@
 // 계좌별 현황 컴포넌트
-// 은행 글자 배지 + 잔액 + 결제 내역 리스트
+// 잔여액 메인 + 카드별 청구 내역
 import { useMemo } from 'react';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import { useBillStore } from '@/stores/useBillStore';
 import { formatWon } from '@/utils/formatter';
+import { BANK_COLORS } from '@/utils/constants';
+import { cn } from '@/lib/utils';
 
 interface AccountOverviewProps {
   year: number;
@@ -37,15 +39,21 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
   return (
     <div className="space-y-3">
       {accountData.map(({ account, linkedCards, billTotal, afterPayment, monthBills }) => {
-        const usageRatio = account.balance > 0
-          ? Math.min((billTotal / account.balance) * 100, 100)
+        const remainingRatio = account.balance > 0
+          ? Math.max(0, Math.min((afterPayment / account.balance) * 100, 100))
           : 0;
 
         return (
           <div key={account.id} className="card-elevated p-5 press-scale">
-            {/* 계좌 헤더 */}
+            {/* 계좌 헤더: 은행 뱃지 + 잔여액 메인 */}
             <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground text-background text-[11px] font-bold">
+              <div
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white text-[11px] font-bold shadow-lg"
+                style={{
+                  backgroundColor: BANK_COLORS[account.bank] || '#6B7280',
+                  boxShadow: `0 4px 12px ${BANK_COLORS[account.bank] || '#6B7280'}40`,
+                }}
+              >
                 {account.bank.slice(0, 2)}
               </div>
               <div className="flex-1 min-w-0">
@@ -53,21 +61,32 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
                 <p className="text-[12px] text-muted-foreground mt-0.5">{account.bank}</p>
               </div>
               <div className="text-right">
-                <p className="font-display text-[20px] font-extrabold tabular-nums tracking-tight">
-                  {formatWon(account.balance)}
+                <p className={cn(
+                  'font-display text-[20px] font-extrabold tabular-nums tracking-tight',
+                  afterPayment >= 0 ? 'text-blue-500' : 'text-red-500',
+                )}>
+                  {formatWon(afterPayment)}
                 </p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">결제 후</p>
               </div>
             </div>
 
             {/* 결제 내역 */}
             {billTotal > 0 && (
               <div className="mt-4 pt-4 border-t border-border/50">
-                {/* 사용률 바 */}
+                {/* 잔여 비율 바 */}
                 <div className="mb-3">
-                  <div className="h-[5px] rounded-full bg-muted overflow-hidden">
+                  <div className="h-[6px] rounded-full bg-muted/60 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-foreground/30 transition-all duration-700 ease-out"
-                      style={{ width: `${usageRatio}%` }}
+                      className="h-full rounded-full transition-all duration-700 ease-out"
+                      style={{
+                        width: `${remainingRatio}%`,
+                        background: remainingRatio > 50
+                          ? 'linear-gradient(90deg, #818cf8, #6366f1)'
+                          : remainingRatio > 20
+                            ? 'linear-gradient(90deg, #fbbf24, #f59e0b)'
+                            : 'linear-gradient(90deg, #f87171, #ef4444)',
+                      }}
                     />
                   </div>
                 </div>
@@ -86,7 +105,7 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
                           />
                           <span className="text-[13px] text-muted-foreground">{card.name}</span>
                         </div>
-                        <span className="text-[13px] font-semibold text-muted-foreground tabular-nums">
+                        <span className="text-[13px] font-semibold text-red-500 tabular-nums">
                           -{formatWon(bill.amount)}
                         </span>
                       </div>
@@ -94,11 +113,11 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
                   })}
                 </div>
 
-                {/* 결제 후 잔액 */}
+                {/* 잔액 (보조 정보) */}
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-border/40">
-                  <span className="text-[13px] text-muted-foreground font-medium">결제 후 잔액</span>
-                  <span className="font-display text-[16px] font-extrabold tabular-nums text-foreground">
-                    {formatWon(afterPayment)}
+                  <span className="text-[13px] text-muted-foreground font-medium">잔액</span>
+                  <span className="text-[13px] font-semibold tabular-nums text-muted-foreground">
+                    {formatWon(account.balance)}
                   </span>
                 </div>
               </div>

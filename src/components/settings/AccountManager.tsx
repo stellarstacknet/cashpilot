@@ -18,7 +18,7 @@ import {
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useCardStore } from '@/stores/useCardStore';
 import type { AccountPurpose } from '@/types';
-import { BANKS, ACCOUNT_PURPOSE_LABELS } from '@/utils/constants';
+import { BANKS, ACCOUNT_PURPOSE_LABELS, BANK_COLORS } from '@/utils/constants';
 import { formatWon, parseAmountInput, formatCurrency } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
 
@@ -118,10 +118,33 @@ export function AccountManager() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3.5">
-                  {/* 은행 뱃지 */}
-                  <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-foreground text-background font-display text-[15px] font-extrabold">
-                    {account.bank.slice(0, 2)}
+                  {/* 통장 비주얼 */}
+                  <div
+                    className="relative h-[52px] w-[82px] shrink-0 rounded-xl overflow-hidden bg-slate-800"
+                    style={{
+                      boxShadow: `0 4px 14px ${BANK_COLORS[account.bank] || '#6B7280'}30`,
+                    }}
+                  >
+                    {/* 상단 은행 색상 띠 */}
+                    <div
+                      className="absolute top-0 left-0 right-0 h-[18px]"
+                      style={{ backgroundColor: BANK_COLORS[account.bank] || '#6B7280' }}
+                    />
+                    {/* 은행 약자 */}
+                    <div className="absolute top-[3px] left-3 text-[7px] font-extrabold text-white/90 tracking-tight">
+                      {account.bank.slice(0, 5)}
+                    </div>
+                    {/* 통장 라인 디테일 */}
+                    <div className="absolute bottom-[14px] left-3 right-3 h-[1px] bg-white/10" />
+                    <div className="absolute bottom-[9px] left-3 right-5 h-[1px] bg-white/7" />
+                    {/* 통장 이름 */}
+                    <div className="absolute bottom-2 left-3 right-3">
+                      <p className="text-[7px] font-bold text-white/60 tracking-wider truncate">
+                        {ACCOUNT_PURPOSE_LABELS[account.purpose]}
+                      </p>
+                    </div>
                   </div>
+
                   <div>
                     <p className="text-[15px] font-bold">{account.name}</p>
                     <p className="text-[12px] text-muted-foreground mt-0.5">

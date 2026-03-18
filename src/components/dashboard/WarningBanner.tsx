@@ -9,10 +9,10 @@ export function WarningBanner({ warnings }: WarningBannerProps) {
   if (warnings.length === 0) return null;
 
   return (
-    <div className="rounded-2xl bg-muted/60 p-4 ring-1 ring-border">
+    <div className="rounded-2xl bg-red-500/10 p-4 ring-1 ring-red-500/20">
       <div className="flex items-center gap-2 mb-2">
-        <AlertTriangle className="h-4 w-4 text-foreground/60" />
-        <span className="text-[13px] font-bold text-foreground">주의가 필요해요</span>
+        <AlertTriangle className="h-4 w-4 text-red-500" />
+        <span className="text-[13px] font-bold text-red-500">주의가 필요해요</span>
       </div>
       <div className="space-y-1.5">
         {warnings.map((warning, i) => (
