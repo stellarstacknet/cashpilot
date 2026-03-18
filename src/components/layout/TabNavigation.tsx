@@ -1,7 +1,7 @@
-import { LayoutDashboard, Receipt, ArrowRightLeft, BarChart3, Settings } from 'lucide-react';
+import { LayoutDashboard, Receipt, ArrowRightLeft, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type TabId = 'dashboard' | 'bills' | 'transfer' | 'history' | 'settings';
+export type TabId = 'dashboard' | 'bills' | 'transfer' | 'settings';
 
 interface TabNavigationProps {
   activeTab: TabId;
@@ -12,7 +12,6 @@ const tabs: { id: TabId; label: string; icon: React.ComponentType<{ className?: 
   { id: 'dashboard', label: '홈', icon: LayoutDashboard },
   { id: 'bills', label: '청구서', icon: Receipt },
   { id: 'transfer', label: '이체', icon: ArrowRightLeft },
-  { id: 'history', label: '히스토리', icon: BarChart3 },
   { id: 'settings', label: '설정', icon: Settings },
 ];
 

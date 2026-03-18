@@ -3,7 +3,6 @@ import { TabNavigation, type TabId } from './TabNavigation';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { BillsPage } from '@/pages/BillsPage';
 import { TransferPlanPage } from '@/pages/TransferPlanPage';
-import { HistoryPage } from '@/pages/HistoryPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { useMonthNavigation } from '@/hooks/useMonthNavigation';
 
@@ -11,7 +10,6 @@ const PAGE_TITLES: Record<TabId, string> = {
   dashboard: '대시보드',
   bills: '청구서',
   transfer: '이체 플랜',
-  history: '히스토리',
   settings: '설정',
 };
 
@@ -27,8 +25,6 @@ export function AppShell() {
         return <BillsPage monthNav={monthNav} />;
       case 'transfer':
         return <TransferPlanPage monthNav={monthNav} />;
-      case 'history':
-        return <HistoryPage />;
       case 'settings':
         return <SettingsPage />;
     }
