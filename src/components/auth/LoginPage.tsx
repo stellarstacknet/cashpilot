@@ -9,9 +9,7 @@ export function LoginPage() {
     <div className="mesh-gradient flex min-h-screen flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm space-y-12 text-center">
         <div>
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl hero-gradient shadow-xl shadow-primary/30">
-            <span className="relative z-10 font-display text-3xl font-black text-white">C</span>
-          </div>
+          <img src="/favicon.svg" alt="CashPilot" className="mx-auto mb-6 h-20 w-20 rounded-2xl shadow-xl shadow-primary/30" />
           <h1 className="font-display text-3xl font-black tracking-tight">
             Cash<span className="text-primary">Pilot</span>
           </h1>
