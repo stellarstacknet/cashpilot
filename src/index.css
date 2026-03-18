@@ -24,7 +24,7 @@
     --input: 220 13% 91%;
     --ring: 221 83% 53%;
     --radius: 1rem;
-    --chart-grid: #f0f0f0;
+    --chart-grid: #e2e8f0;
     --chart-tick: #94a3b8;
     --chart-border: #e2e8f0;
     --chart-bg: #ffffff;
@@ -70,6 +70,11 @@
   }
 }
 
+/* Heading / brand font */
+.font-display {
+  font-family: 'Outfit', 'Pretendard Variable', sans-serif;
+}
+
 html, body, #root {
   height: 100%;
   -webkit-tap-highlight-color: transparent;
@@ -81,7 +86,7 @@ html, body, #root {
 }
 
 /* Tabular nums for monetary values */
-.font-mono, [data-amount] {
+.tabular-nums, .font-mono, [data-amount] {
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: "tnum" 1, "lnum" 1;
 }
@@ -89,6 +94,19 @@ html, body, #root {
 /* Safe area for PWA */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Smooth transitions */
+.transition-theme {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Card hover micro-interaction */
+.card-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-interactive:active {
+  transform: scale(0.98);
 }
 
 /* Smooth scrolling */
@@ -104,6 +122,6 @@ html, body, #root {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
+  background: hsl(var(--muted-foreground) / 0.2);
   border-radius: 9999px;
 }

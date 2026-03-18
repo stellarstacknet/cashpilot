@@ -42,7 +42,7 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
             <CalendarX className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-semibold">{formatYearMonth(year, month)}</h3>
+          <h3 className="font-display text-lg font-semibold">{formatYearMonth(year, month)}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             이 달의 청구서 데이터가 없습니다.
           </p>
@@ -58,12 +58,12 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
           <WarningBanner warnings={warnings} />
 
           <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">계좌별 현황</h3>
+            <h3 className="mb-3 font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">계좌별 현황</h3>
             <AccountOverview year={year} month={month} />
           </div>
 
           <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">타임라인</h3>
+            <h3 className="mb-3 font-display text-xs font-semibold uppercase tracking-widest text-muted-foreground">타임라인</h3>
             <Timeline events={summary.timelineEvents} month={month} />
           </div>
 

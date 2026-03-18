@@ -36,7 +36,7 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       {user && (
-        <div className="rounded-2xl border border-border/50 bg-card p-5">
+        <div className="rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
@@ -56,7 +56,7 @@ export function SettingsPage() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-border/50 bg-card p-5">
+      <div className="rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
         <p className="text-sm font-medium mb-3">테마</p>
         <div className="flex gap-2">
           {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
@@ -64,7 +64,7 @@ export function SettingsPage() {
               key={value}
               onClick={() => setTheme(value)}
               className={cn(
-                'flex flex-1 flex-col items-center gap-1.5 rounded-xl border p-3 text-xs font-medium transition-all',
+                'flex flex-1 flex-col items-center gap-1.5 rounded-xl border p-3 text-xs font-medium transition-all duration-200',
                 theme === value
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-border text-muted-foreground hover:bg-muted',
@@ -77,7 +77,7 @@ export function SettingsPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/50 bg-card p-5">
+      <div className="rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium">앱 설치</p>

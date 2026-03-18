@@ -32,12 +32,12 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-lg items-center justify-between px-5 py-3.5">
-          <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
+      <header className="sticky top-0 z-40 border-b border-border/40 bg-background/70 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-lg items-center justify-between px-5 py-3">
+          <h1 className="font-display text-xl font-bold tracking-tight bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
             CashPilot
           </h1>
-          <span className="text-sm font-medium text-muted-foreground">
+          <span className="text-xs font-medium text-muted-foreground tracking-wide">
             {PAGE_TITLES[activeTab]}
           </span>
         </div>
