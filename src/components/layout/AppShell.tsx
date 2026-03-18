@@ -36,7 +36,7 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="sticky top-0 z-40 border-b bg-white/80 backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b bg-white/80 dark:bg-gray-950/80 backdrop-blur-lg">
         <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
           <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             CashPilot

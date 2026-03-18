@@ -22,8 +22,8 @@ export function Timeline({ events, month }: TimelineProps) {
         <div
           key={i}
           className={cn(
-            'flex items-center gap-3 rounded-xl border bg-white p-3 text-sm transition-colors',
-            event.isShortage && 'border-red-200 bg-red-50',
+            'flex items-center gap-3 rounded-xl border bg-white dark:bg-gray-900 p-3 text-sm transition-colors',
+            event.isShortage && 'border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950',
           )}
         >
           <span className="w-10 shrink-0 text-center text-xs font-medium text-muted-foreground">
@@ -33,8 +33,8 @@ export function Timeline({ events, month }: TimelineProps) {
           <div className={cn(
             'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm',
             event.type === 'income'
-              ? 'bg-blue-50 text-blue-600'
-              : 'bg-rose-50 text-rose-600',
+              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
+              : 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-400',
           )}>
             {event.type === 'income' ? '\u{1F4B0}' : '\u{1F4B3}'}
           </div>
@@ -56,14 +56,14 @@ export function Timeline({ events, month }: TimelineProps) {
             <span
               className={cn(
                 'font-mono text-sm font-semibold',
-                event.type === 'income' ? 'text-blue-600' : 'text-rose-600',
+                event.type === 'income' ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-400',
               )}
             >
               {event.type === 'income' ? '+' : '-'}
               {formatCurrency(event.amount)}
             </span>
             {event.isShortage && (
-              <div className="text-[10px] text-red-600">
+              <div className="text-[10px] text-red-600 dark:text-red-400">
                 {formatCurrency(Math.abs(event.balanceAfter))} 부족
               </div>
             )}

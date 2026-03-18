@@ -1,4 +1,4 @@
-import { Download, LogOut, RefreshCw, Check } from 'lucide-react';
+import { Download, LogOut, RefreshCw, Check, Sun, Moon, Monitor } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { AccountManager } from '@/components/settings/AccountManager';
@@ -7,12 +7,21 @@ import { DataManagement } from '@/components/settings/DataManagement';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { pullFromSupabase, pushToSupabase } from '@/lib/sync';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
+import { useTheme } from '@/hooks/useTheme';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
+
+const THEME_OPTIONS = [
+  { value: 'light' as const, label: '라이트', icon: Sun },
+  { value: 'dark' as const, label: '다크', icon: Moon },
+  { value: 'system' as const, label: '시스템', icon: Monitor },
+];
 
 export function SettingsPage() {
   const { user, signOut } = useAuthStore();
   const [syncing, setSyncing] = useState(false);
   const { canInstall, isInstalled, isIOS, install } = usePWAInstall();
+  const { theme, setTheme } = useTheme();
 
   const handleSync = async () => {
     setSyncing(true);
@@ -27,7 +36,7 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       {user && (
-        <div className="rounded-xl border bg-white p-4">
+        <div className="rounded-xl border bg-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
@@ -47,7 +56,28 @@ export function SettingsPage() {
         </div>
       )}
 
-      <div className="rounded-xl border bg-white p-4">
+      <div className="rounded-xl border bg-card p-4">
+        <p className="text-sm font-medium mb-3">테마</p>
+        <div className="flex gap-2">
+          {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
+            <button
+              key={value}
+              onClick={() => setTheme(value)}
+              className={cn(
+                'flex flex-1 flex-col items-center gap-1.5 rounded-lg border p-3 text-xs font-medium transition-all',
+                theme === value
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:bg-muted',
+              )}
+            >
+              <Icon className="h-5 w-5" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border bg-card p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium">앱 설치</p>

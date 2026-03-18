@@ -26,12 +26,12 @@ export function TrendChart({ snapshots }: TrendChartProps) {
   return (
     <ResponsiveContainer width="100%" height={280}>
       <ComposedChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-        <XAxis dataKey="name" fontSize={11} tick={{ fill: '#9ca3af' }} />
-        <YAxis fontSize={11} tick={{ fill: '#9ca3af' }} tickFormatter={(v) => `${(v / 10000).toFixed(0)}만`} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid, #f0f0f0)" />
+        <XAxis dataKey="name" fontSize={11} tick={{ fill: 'var(--chart-tick, #9ca3af)' }} />
+        <YAxis fontSize={11} tick={{ fill: 'var(--chart-tick, #9ca3af)' }} tickFormatter={(v) => `${(v / 10000).toFixed(0)}만`} />
         <Tooltip
           formatter={(value) => `${Number(value).toLocaleString()}원`}
-          contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '13px' }}
+          contentStyle={{ borderRadius: '12px', border: '1px solid var(--chart-border, #e5e7eb)', fontSize: '13px', backgroundColor: 'var(--chart-bg, #fff)', color: 'var(--chart-text, #000)' }}
           labelStyle={{ fontWeight: 600 }}
         />
         <Legend

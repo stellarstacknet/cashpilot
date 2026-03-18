@@ -50,7 +50,7 @@ export function BillInputList({ year, month }: BillInputListProps) {
           <span className="font-mono text-lg font-bold">{formatWon(totalBills)}</span>
         </div>
         {allEntered && (
-          <p className="mt-1 text-xs text-emerald-600">모든 청구서 입력 완료</p>
+          <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">모든 청구서 입력 완료</p>
         )}
       </div>
     </div>

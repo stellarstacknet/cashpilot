@@ -24,6 +24,11 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
+    --chart-grid: #f0f0f0;
+    --chart-tick: #9ca3af;
+    --chart-border: #e5e7eb;
+    --chart-bg: #ffffff;
+    --chart-text: #1f2937;
   }
 
   .dark {
@@ -46,6 +51,11 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+    --chart-grid: #374151;
+    --chart-tick: #9ca3af;
+    --chart-border: #374151;
+    --chart-bg: #111827;
+    --chart-text: #f3f4f6;
   }
 }
 

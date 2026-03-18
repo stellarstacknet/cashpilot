@@ -18,7 +18,7 @@ const tabs: { id: TabId; label: string; icon: React.ComponentType<{ className?: 
 
 export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-white/80 backdrop-blur-lg">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-white/80 dark:bg-gray-950/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-lg">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
@@ -33,7 +33,7 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
           >
             <div className={cn(
               'flex items-center justify-center rounded-xl px-4 py-1 transition-all',
-              activeTab === id && 'bg-blue-50',
+              activeTab === id && 'bg-blue-50 dark:bg-blue-950',
             )}>
               <Icon className={cn('h-5 w-5', activeTab === id && 'scale-105')} />
             </div>

@@ -38,7 +38,7 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
   return (
     <div className="space-y-2">
       {accountData.map(({ account, linkedCards, billTotal, afterPayment }) => (
-        <div key={account.id} className="rounded-xl border bg-white p-3.5">
+        <div key={account.id} className="rounded-xl border bg-white dark:bg-gray-900 p-3.5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold">{account.name}</p>
@@ -58,7 +58,7 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
                       <span className="h-2 w-2 rounded-full" style={{ backgroundColor: card.color }} />
                       <span className="text-muted-foreground">{card.name} ({card.paymentDay}일)</span>
                     </div>
-                    <span className="text-rose-600 font-mono">-{formatWon(bill.amount)}</span>
+                    <span className="text-rose-600 dark:text-rose-400 font-mono">-{formatWon(bill.amount)}</span>
                   </div>
                 );
               })}
@@ -66,7 +66,7 @@ export function AccountOverview({ year, month }: AccountOverviewProps) {
                 <span className="text-xs font-medium">결제 후 잔액</span>
                 <span className={cn(
                   'text-sm font-bold font-mono',
-                  afterPayment >= 0 ? 'text-emerald-600' : 'text-red-600',
+                  afterPayment >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400',
                 )}>
                   {formatWon(afterPayment)}
                 </span>
