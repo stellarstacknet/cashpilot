@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'CashPilot - 카드 청구액 관리',
         short_name: 'CashPilot',
         description: '매달 카드 청구액을 입력하면 계좌 간 이체 플랜을 자동 계산해주는 대시보드',
-        theme_color: '#3B82F6',
+        theme_color: '#f8fafc',
         background_color: '#f8fafc',
         display: 'standalone',
         orientation: 'portrait',

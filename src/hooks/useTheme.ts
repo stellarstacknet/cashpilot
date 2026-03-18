@@ -8,7 +8,11 @@ function getSystemTheme(): 'light' | 'dark' {
 
 function applyTheme(theme: Theme) {
   const resolved = theme === 'system' ? getSystemTheme() : theme;
-  document.documentElement.classList.toggle('dark', resolved === 'dark');
+  const isDark = resolved === 'dark';
+  document.documentElement.classList.toggle('dark', isDark);
+
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isDark ? '#030712' : '#f8fafc');
 }
 
 export function useTheme() {

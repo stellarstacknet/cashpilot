@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/pwa-192x192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#3B82F6" />
+    <meta name="theme-color" content="#f8fafc" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="CashPilot" />
@@ -14,7 +14,14 @@
   </head>
   <body>
     <script>
-      (function(){var t=localStorage.getItem('cashpilot-theme')||'system';var d=t==='system'?window.matchMedia('(prefers-color-scheme:dark)').matches:t==='dark';if(d)document.documentElement.classList.add('dark');})();
+      (function(){
+        var t=localStorage.getItem('cashpilot-theme')||'system';
+        var d=t==='system'?window.matchMedia('(prefers-color-scheme:dark)').matches:t==='dark';
+        if(d)document.documentElement.classList.add('dark');
+        document.querySelector('meta[name="theme-color"]').content=d?'#030712':'#3B82F6';
+        window.__pwaInstallPrompt=null;
+        window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__pwaInstallPrompt=e;});
+      })();
     </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
