@@ -9,6 +9,7 @@ interface MonthSelectorProps {
   onNext: () => void;
   onToday?: () => void;
   isCurrentMonth?: boolean;
+  canGoNext?: boolean;
 }
 
 export function MonthSelector({
@@ -18,6 +19,7 @@ export function MonthSelector({
   onNext,
   onToday,
   isCurrentMonth,
+  canGoNext = true,
 }: MonthSelectorProps) {
   return (
     <div className="flex items-center justify-between rounded-xl bg-card p-2 shadow-sm border">
@@ -34,7 +36,7 @@ export function MonthSelector({
         )}
       </div>
 
-      <Button variant="ghost" size="icon" onClick={onNext} className="rounded-lg">
+      <Button variant="ghost" size="icon" onClick={onNext} disabled={!canGoNext} className="rounded-lg">
         <ChevronRight className="h-5 w-5" />
       </Button>
     </div>

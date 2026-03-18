@@ -21,7 +21,7 @@ interface DashboardPageProps {
 }
 
 export function DashboardPage({ monthNav }: DashboardPageProps) {
-  const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth } = monthNav;
+  const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth, canGoNext } = monthNav;
   const summary = useDashboardSummary(year, month);
   const { warnings, savingsAvailable } = useTransferPlan(year, month);
 
@@ -34,6 +34,7 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
         onNext={goToNextMonth}
         onToday={goToCurrentMonth}
         isCurrentMonth={isCurrentMonth}
+        canGoNext={canGoNext}
       />
 
       {summary.totalBills === 0 && !isCurrentMonth ? (

@@ -30,6 +30,7 @@ export function useMonthNavigation() {
   }, []);
 
   const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
+  const canGoNext = !isCurrentMonth;
 
   return {
     year,
@@ -38,5 +39,6 @@ export function useMonthNavigation() {
     goToNextMonth,
     goToCurrentMonth,
     isCurrentMonth,
+    canGoNext,
   };
 }

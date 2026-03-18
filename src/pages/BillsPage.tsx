@@ -13,7 +13,7 @@ interface BillsPageProps {
 }
 
 export function BillsPage({ monthNav }: BillsPageProps) {
-  const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth } = monthNav;
+  const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth, canGoNext } = monthNav;
 
   return (
     <div className="space-y-4">
@@ -24,6 +24,7 @@ export function BillsPage({ monthNav }: BillsPageProps) {
         onNext={goToNextMonth}
         onToday={goToCurrentMonth}
         isCurrentMonth={isCurrentMonth}
+        canGoNext={canGoNext}
       />
 
       <BillInputList year={year} month={month} />

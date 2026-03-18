@@ -15,7 +15,7 @@ interface TransferPlanPageProps {
 }
 
 export function TransferPlanPage({ monthNav }: TransferPlanPageProps) {
-  const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth } = monthNav;
+  const { year, month, goToPrevMonth, goToNextMonth, goToCurrentMonth, isCurrentMonth, canGoNext } = monthNav;
   const { transferPlans, warnings, savingsAvailable } = useTransferPlan(year, month);
 
   return (
@@ -27,6 +27,7 @@ export function TransferPlanPage({ monthNav }: TransferPlanPageProps) {
         onNext={goToNextMonth}
         onToday={goToCurrentMonth}
         isCurrentMonth={isCurrentMonth}
+        canGoNext={canGoNext}
       />
 
       <ShortageStrategy warnings={warnings} savingsAvailable={savingsAvailable} />
