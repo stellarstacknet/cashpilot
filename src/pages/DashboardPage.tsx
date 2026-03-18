@@ -26,7 +26,7 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
   const { warnings, savingsAvailable } = useTransferPlan(year, month);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <MonthSelector
         year={year}
         month={month}
@@ -58,17 +58,17 @@ export function DashboardPage({ monthNav }: DashboardPageProps) {
           <WarningBanner warnings={warnings} />
 
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-muted-foreground">계좌별 현황</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">계좌별 현황</h3>
             <AccountOverview year={year} month={month} />
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-muted-foreground">타임라인</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">타임라인</h3>
             <Timeline events={summary.timelineEvents} month={month} />
           </div>
 
           {savingsAvailable > 0 && (
-            <div className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950 dark:to-green-950 p-4 text-center">
+            <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/30 p-5 text-center">
               <p className="text-sm text-emerald-700 dark:text-emerald-400">
                 저축 가능 금액: <strong>{formatWon(savingsAvailable)}</strong>
               </p>

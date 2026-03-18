@@ -32,9 +32,9 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <header className="sticky top-0 z-40 border-b bg-white/80 dark:bg-gray-950/80 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
-          <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-lg items-center justify-between px-5 py-3.5">
+          <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
             CashPilot
           </h1>
           <span className="text-sm font-medium text-muted-foreground">
@@ -43,7 +43,7 @@ export function AppShell() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 pb-20 pt-4">
+      <main className="mx-auto w-full max-w-lg flex-1 px-5 pb-24 pt-5">
         {renderPage()}
       </main>
 

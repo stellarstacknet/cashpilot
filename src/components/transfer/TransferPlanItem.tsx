@@ -19,14 +19,14 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
 
   const priorityColor =
     plan.priority === 1
-      ? 'bg-red-100 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800'
+      ? 'bg-red-100 text-red-600 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800'
       : plan.priority <= 3
-        ? 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-800'
-        : 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700';
+        ? 'bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800'
+        : 'bg-muted text-muted-foreground border-border';
 
   return (
-    <Card className={cn('rounded-xl', plan.status !== 'pending' && 'opacity-60')}>
-      <CardContent className="p-4">
+    <Card className={cn('rounded-2xl border-border/50', plan.status !== 'pending' && 'opacity-50')}>
+      <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className={priorityColor}>
@@ -44,21 +44,21 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
           </span>
         </div>
 
-        <div className="mt-3 flex items-center gap-2 text-sm">
+        <div className="mt-4 flex items-center gap-2 text-sm">
           <span className="font-medium">{fromAccount?.name || '알 수 없음'}</span>
           <span className="text-muted-foreground">&rarr;</span>
           <span className="font-medium">{toAccount?.name || '알 수 없음'}</span>
         </div>
 
-        <p className="mt-1 font-mono text-lg font-bold">{formatWon(plan.amount)}</p>
+        <p className="mt-1.5 font-mono text-xl font-bold tabular-nums tracking-tight">{formatWon(plan.amount)}</p>
         <p className="mt-1 text-xs text-muted-foreground">{plan.reason}</p>
 
         {plan.status === 'pending' && (
-          <div className="mt-3 flex gap-2">
-            <Button size="sm" onClick={() => onMarkDone(plan.id)} className="rounded-lg">
+          <div className="mt-4 flex gap-2">
+            <Button size="sm" onClick={() => onMarkDone(plan.id)} className="rounded-xl">
               완료 처리
             </Button>
-            <Button size="sm" variant="outline" onClick={() => onSkip(plan.id)} className="rounded-lg">
+            <Button size="sm" variant="outline" onClick={() => onSkip(plan.id)} className="rounded-xl">
               건너뛰기
             </Button>
           </div>

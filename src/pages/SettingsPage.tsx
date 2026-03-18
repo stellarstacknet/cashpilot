@@ -36,18 +36,18 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       {user && (
-        <div className="rounded-xl border bg-card p-4">
+        <div className="rounded-2xl border border-border/50 bg-card p-5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleSync} disabled={syncing} className="rounded-lg">
+              <Button variant="outline" size="sm" onClick={handleSync} disabled={syncing} className="rounded-xl">
                 <RefreshCw className={`mr-1 h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
                 동기화
               </Button>
-              <Button variant="outline" size="sm" onClick={signOut} className="rounded-lg">
+              <Button variant="outline" size="sm" onClick={signOut} className="rounded-xl">
                 <LogOut className="mr-1 h-4 w-4" />
                 로그아웃
               </Button>
@@ -56,7 +56,7 @@ export function SettingsPage() {
         </div>
       )}
 
-      <div className="rounded-xl border bg-card p-4">
+      <div className="rounded-2xl border border-border/50 bg-card p-5">
         <p className="text-sm font-medium mb-3">테마</p>
         <div className="flex gap-2">
           {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
@@ -64,7 +64,7 @@ export function SettingsPage() {
               key={value}
               onClick={() => setTheme(value)}
               className={cn(
-                'flex flex-1 flex-col items-center gap-1.5 rounded-lg border p-3 text-xs font-medium transition-all',
+                'flex flex-1 flex-col items-center gap-1.5 rounded-xl border p-3 text-xs font-medium transition-all',
                 theme === value
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-border text-muted-foreground hover:bg-muted',
@@ -77,7 +77,7 @@ export function SettingsPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-4">
+      <div className="rounded-2xl border border-border/50 bg-card p-5">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium">앱 설치</p>
@@ -90,11 +90,11 @@ export function SettingsPage() {
             </p>
           </div>
           {canInstall ? (
-            <Button size="sm" onClick={install} className="rounded-lg">
+            <Button size="sm" onClick={install} className="rounded-xl">
               <Download className="mr-1 h-4 w-4" />설치
             </Button>
           ) : isInstalled ? (
-            <Button variant="ghost" size="sm" disabled className="rounded-lg">
+            <Button variant="ghost" size="sm" disabled className="rounded-xl">
               <Check className="mr-1 h-4 w-4" />설치됨
             </Button>
           ) : null}
