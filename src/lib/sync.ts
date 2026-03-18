@@ -10,6 +10,9 @@ import type { Account, Card, MonthlyBill, FixedExpense } from '@/types';
 
 export type SyncResult = { success: true } | { success: false; error: string };
 
+// 동기화 진행 중 플래그 (auto-sync 억제용)
+let isSyncing = false;
+
 // Supabase → 로컬 store로 데이터 가져오기
 export async function pullFromSupabase(): Promise<SyncResult> {
   if (!navigator.onLine) return { success: false, error: '오프라인 상태입니다' };
@@ -31,6 +34,11 @@ export async function pullFromSupabase(): Promise<SyncResult> {
     if (firstError?.error) {
       throw firstError.error;
     }
+
+    // pull로 store 업데이트 시 auto-sync 방지
+    isSyncing = true;
+
+    console.log('[Sync] Pull 수신 - 계좌:', accountsRes.data?.map((a: { id: string; bank: string; balance: number }) => ({ id: a.id.slice(0, 8), bank: a.bank, balance: a.balance })));
 
     // Supabase snake_case → 로컬 camelCase 변환 후 store 업데이트
     if (accountsRes.data) {
@@ -94,8 +102,10 @@ export async function pullFromSupabase(): Promise<SyncResult> {
       useFixedExpenseStore.setState({ expenses });
     }
 
+    isSyncing = false;
     return { success: true };
   } catch (e: unknown) {
+    isSyncing = false;
     const err = e as { message?: string; details?: string; hint?: string };
     const msg = err.message || '동기화 실패';
     console.error('Pull sync error:', msg, err);
@@ -108,13 +118,16 @@ export async function pushToSupabase(): Promise<SyncResult> {
   if (!navigator.onLine) return { success: false, error: '오프라인 상태입니다' };
 
   try {
+    isSyncing = true;
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { success: false, error: '로그인이 필요합니다' };
+    if (!user) { isSyncing = false; return { success: false, error: '로그인이 필요합니다' }; }
 
     const accounts = useAccountStore.getState().accounts;
     const cards = useCardStore.getState().cards;
     const bills = useBillStore.getState().bills;
     const fixedExpenses = useFixedExpenseStore.getState().expenses;
+
+    console.log('[Sync] Push 시작 - 계좌:', accounts.map(a => ({ id: a.id.slice(0, 8), bank: a.bank, balance: a.balance })));
 
     // 계좌 upsert (camelCase → snake_case 변환)
     for (const a of accounts) {
@@ -178,8 +191,11 @@ export async function pushToSupabase(): Promise<SyncResult> {
       if (error) throw error;
     }
 
+    console.log('[Sync] Push 완료');
+    isSyncing = false;
     return { success: true };
   } catch (e: unknown) {
+    isSyncing = false;
     const err = e as { message?: string; details?: string; hint?: string; code?: string };
     const msg = err.message || '동기화 실패';
     const details = err.details || err.hint || '';
@@ -192,11 +208,12 @@ export async function pushToSupabase(): Promise<SyncResult> {
 
 let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 
-// 1.5초 디바운스로 push 실행
+// 1.5초 디바운스로 push 실행 (동기화 진행 중이면 무시)
 function debouncedSync() {
+  if (isSyncing) return;
   if (syncTimeout) clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => {
-    pushToSupabase();
+    if (!isSyncing) pushToSupabase();
   }, 1500);
 }
 
