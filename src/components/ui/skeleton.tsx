@@ -14,14 +14,14 @@ export function Skeleton({ className }: SkeletonProps) {
 export function DashboardSkeleton() {
   return (
     <div className="space-y-3">
-      <Skeleton className="h-28 w-full rounded-[20px]" />
+      <Skeleton className="h-28 w-full" />
       <div className="grid grid-cols-2 gap-3">
-        <Skeleton className="h-24 rounded-2xl" />
-        <Skeleton className="h-24 rounded-2xl" />
+        <Skeleton className="h-24" />
+        <Skeleton className="h-24" />
       </div>
-      <Skeleton className="h-5 w-24 mt-4 rounded-lg" />
-      <Skeleton className="h-20 rounded-2xl" />
-      <Skeleton className="h-20 rounded-2xl" />
+      <Skeleton className="h-5 w-24 mt-4" />
+      <Skeleton className="h-20" />
+      <Skeleton className="h-20" />
     </div>
   );
 }
@@ -31,7 +31,7 @@ export function CardListSkeleton({ count = 3 }: { count?: number }) {
   return (
     <div className="space-y-2.5">
       {Array.from({ length: count }).map((_, i) => (
-        <Skeleton key={i} className="h-16 rounded-2xl" />
+        <Skeleton key={i} className="h-16" />
       ))}
     </div>
   );

@@ -9,10 +9,10 @@ export function LoginPage() {
     <div className="mesh-gradient flex min-h-screen flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm space-y-12 text-center">
         <div>
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[22px] hero-gradient shadow-xl shadow-primary/30">
-            <span className="relative z-10 font-display text-3xl font-extrabold text-white">C</span>
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl hero-gradient shadow-xl shadow-primary/30">
+            <span className="relative z-10 font-display text-3xl font-black text-white">C</span>
           </div>
-          <h1 className="font-display text-3xl font-extrabold tracking-tight">
+          <h1 className="font-display text-3xl font-black tracking-tight">
             Cash<span className="text-primary">Pilot</span>
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -22,7 +22,7 @@ export function LoginPage() {
 
         <button
           onClick={signInWithGoogle}
-          className="card-elevated flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-sm font-semibold transition-all duration-200 press-scale"
+          className="card-elevated flex w-full items-center justify-center gap-3 px-5 py-4 text-sm font-bold transition-all duration-200 press-scale"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>

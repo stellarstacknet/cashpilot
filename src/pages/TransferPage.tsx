@@ -23,8 +23,8 @@ export function TransferPage({ monthNav }: TransferPageProps) {
   return (
     <div className="space-y-7">
       <div>
-        <p className="text-[12px] font-bold text-muted-foreground tracking-wider uppercase">TRANSFER</p>
-        <h1 className="text-[22px] font-extrabold tracking-tight mt-0.5">이체 플랜</h1>
+        <p className="text-[12px] font-extrabold text-muted-foreground tracking-wider uppercase">TRANSFER</p>
+        <h1 className="text-[22px] font-black tracking-tight mt-0.5">이체 플랜</h1>
       </div>
 
       <MonthSelector

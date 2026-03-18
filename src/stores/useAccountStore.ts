@@ -7,7 +7,7 @@ import { generateId, nowISO } from '@/utils/formatter';
 
 interface AccountStore {
   accounts: Account[];
-  addAccount: (data: { name: string; bank: string; balance: number; purpose: AccountPurpose }) => void;
+  addAccount: (data: { bank: string; balance: number; purpose: AccountPurpose }) => void;
   updateAccount: (id: string, data: Partial<Omit<Account, 'id' | 'createdAt'>>) => void;
   deleteAccount: (id: string) => void;
   updateBalance: (id: string, balance: number) => void;

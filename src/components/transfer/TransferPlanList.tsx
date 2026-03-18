@@ -65,9 +65,9 @@ export function TransferPlanList({ plans, year, month }: TransferPlanListProps) 
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[11px] text-muted-foreground">대기 중</p>
-            <p className="text-sm font-semibold">{pendingCount}건</p>
+            <p className="text-sm font-bold">{pendingCount}건</p>
           </div>
-          <p className="font-display text-lg font-bold tabular-nums tracking-tight">
+          <p className="font-display text-lg font-extrabold tabular-nums tracking-tight">
             {formatWon(totalAmount)}
           </p>
         </div>

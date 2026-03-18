@@ -82,5 +82,26 @@ export const ACCOUNT_PURPOSE_LABELS: Record<string, string> = {
   general: '일반',
 };
 
+// 은행 로고 경로 (public/logos/)
+export const BANK_LOGOS: Record<string, string> = {
+  '신한은행': '/logos/shinhanbank.png',
+  'KB국민은행': '/logos/kb.png',
+  '우리은행': '/logos/woori.png',
+  '하나은행': '/logos/hana.png',
+  '토스뱅크': '/logos/tossbank.png',
+  '새마을금고': '/logos/mgbank.png',
+};
+
+// 카드사 로고 경로 (public/logos/)
+export const CARD_LOGOS: Record<string, string> = {
+  '삼성카드': '/logos/samsungcard.png',
+  '현대카드': '/logos/hyundaicard.png',
+  '신한카드': '/logos/shinhancard.png',
+  'KB국민카드': '/logos/kbcard.png',
+  '롯데카드': '/logos/lottecard.png',
+  '하나카드': '/logos/hanacard.png',
+  'BC카드': '/logos/bccard.png',
+};
+
 // 앱 버전
 export const APP_VERSION = '1.0.0';

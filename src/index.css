@@ -2,28 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css');
+
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 96%;
-    --card: 222 40% 10%;
-    --card-foreground: 210 35% 96%;
-    --popover: 222 40% 10%;
-    --popover-foreground: 210 35% 96%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 6%;
-    --secondary: 222 30% 16%;
-    --secondary-foreground: 210 30% 90%;
-    --muted: 222 25% 14%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 217 50% 18%;
-    --accent-foreground: 217 80% 75%;
-    --destructive: 0 65% 58%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 12%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 92%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 69% 35%;
     --destructive-foreground: 0 0% 100%;
-    --border: 222 25% 16%;
-    --input: 222 25% 16%;
-    --ring: 217 91% 60%;
-    --radius: 1rem;
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 0 0% 9%;
+    --radius: 0.5rem;
   }
 }
 
@@ -34,13 +36,12 @@
   body {
     @apply bg-background text-foreground antialiased;
     margin: 0;
-    font-family: 'Pretendard Variable', 'Outfit', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background: hsl(var(--background));
+    font-family: 'Spoqa Han Sans Neo', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   }
 }
 
 .font-display {
-  font-family: 'Outfit', 'Pretendard Variable', sans-serif;
+  font-family: 'Spoqa Han Sans Neo', 'Outfit', sans-serif;
 }
 
 html, body, #root {
@@ -64,34 +65,34 @@ html, body, #root {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ── 카드 (네이비 엘리베이션) ── */
+/* ── 카드 (화이트 엘리베이션) ── */
 .card-elevated {
   background: hsl(var(--card));
-  border-radius: 20px;
-  border: 1px solid hsla(217, 35%, 40%, 0.12);
+  border-radius: 8px;
+  border: 1px solid hsl(var(--border));
   box-shadow:
-    0 1px 3px hsla(222, 40%, 5%, 0.3),
-    0 4px 24px hsla(222, 50%, 8%, 0.15);
+    0 1px 3px hsla(0, 0%, 0%, 0.04),
+    0 4px 16px hsla(0, 0%, 0%, 0.06);
 }
 
 /* ── 글래스 (하위 호환) ── */
 .glass {
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 20px;
+  border-radius: 8px;
 }
 .glass-elevated {
   background: hsl(var(--card));
-  border: 1px solid hsla(217, 35%, 40%, 0.12);
-  border-radius: 20px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
   box-shadow:
-    0 1px 3px hsla(222, 40%, 5%, 0.3),
-    0 4px 24px hsla(222, 50%, 8%, 0.15);
+    0 1px 3px hsla(0, 0%, 0%, 0.04),
+    0 4px 16px hsla(0, 0%, 0%, 0.06);
 }
 
-/* ── 히어로 카드 (네이비 → 블루 그라데이션) ── */
+/* ── 히어로 카드 (블랙) ── */
 .hero-gradient {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 35%, #2563eb 70%, #3b82f6 100%);
+  background: #111111;
   position: relative;
   overflow: hidden;
 }
@@ -99,20 +100,7 @@ html, body, #root {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 15% 85%, hsla(217, 70%, 60%, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 85% 15%, hsla(200, 60%, 70%, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, hsla(210, 80%, 80%, 0.06) 0%, transparent 60%);
-  pointer-events: none;
-}
-.hero-gradient::after {
-  content: '';
-  position: absolute;
-  top: -40%;
-  right: -20%;
-  width: 60%;
-  height: 80%;
-  background: radial-gradient(ellipse, hsla(210, 80%, 80%, 0.1) 0%, transparent 70%);
+  background: none;
   pointer-events: none;
 }
 
@@ -123,12 +111,12 @@ html, body, #root {
 
 /* ── 하단 네비게이션 바 ── */
 .floating-nav {
-  background: hsla(222, 45%, 8%, 0.96);
+  background: hsla(0, 0%, 100%, 0.95);
   backdrop-filter: blur(24px) saturate(1.4);
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  border-top: 1px solid hsla(217, 35%, 40%, 0.12);
+  border-top: 1px solid hsl(var(--border));
   box-shadow:
-    0 -2px 20px hsla(222, 40%, 5%, 0.3);
+    0 -2px 12px hsla(0, 0%, 0%, 0.06);
 }
 
 /* ── Page transition ── */
@@ -167,14 +155,14 @@ html, body, #root {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.15);
-  border-radius: 9999px;
+  background: hsl(var(--muted-foreground) / 0.2);
+  border-radius: 8px;
 }
 
 /* ── Section label ── */
 .section-label {
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.01em;
   color: hsl(var(--foreground));
 }
@@ -182,7 +170,7 @@ html, body, #root {
 /* ── Section sub-label ── */
 .section-sub {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: hsl(var(--muted-foreground));
 }
 
@@ -190,14 +178,14 @@ html, body, #root {
 .accent-dot {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: hsl(var(--foreground));
   display: inline-block;
 }
 
 /* ── Amount color helpers ── */
-.amount-positive { color: #60a5fa; }
-.amount-negative { color: #f87171; }
+.amount-positive { color: #3a9bd5; }
+.amount-negative { color: #e53535; }
 
 /* ── 스켈레톤 로딩 애니메이션 ── */
 @keyframes skeleton-pulse {
@@ -208,7 +196,7 @@ html, body, #root {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   background: linear-gradient(90deg, hsl(var(--muted)) 0%, hsl(var(--muted-foreground) / 0.08) 50%, hsl(var(--muted)) 100%);
   background-size: 200% 100%;
-  border-radius: 0.75rem;
+  border-radius: 8px;
 }
 
 /* ── Empty State 아이콘 부드러운 바운스 ── */
@@ -243,21 +231,21 @@ html, body, #root {
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 14px;
-  font-weight: 800;
+  border-radius: 8px;
+  font-weight: 900;
   font-size: 13px;
 }
 
 /* ── 프로그레스 바 ── */
 .progress-bar {
   height: 6px;
-  border-radius: 3px;
+  border-radius: 8px;
   background: hsl(var(--muted));
   overflow: hidden;
 }
 .progress-bar-fill {
   height: 100%;
-  border-radius: 3px;
+  border-radius: 8px;
   transition: width 0.5s ease;
 }
 
@@ -276,7 +264,7 @@ html, body, #root {
   align-items: center;
   gap: 4px;
   padding: 3px 10px;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
 }

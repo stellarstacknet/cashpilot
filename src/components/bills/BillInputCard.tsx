@@ -5,6 +5,7 @@ import { formatCurrency, parseAmountInput } from '@/utils/formatter';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CARD_LOGOS } from '@/utils/constants';
 
 interface BillInputCardProps {
   card: CardType;
@@ -70,28 +71,28 @@ export function BillInputCard({
       hasAmount && 'ring-1 ring-foreground/10',
     )}>
       <div className="flex items-center gap-3.5">
-        {/* 미니 카드 비주얼 */}
-        <div
-          className="relative h-[52px] w-[82px] shrink-0 rounded-xl overflow-hidden"
-          style={{ backgroundColor: card.color }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-          <div className="absolute left-3 top-2.5 h-[10px] w-[14px] rounded-[2px] bg-white/40" />
-          <div className="absolute bottom-2 left-3 right-3">
-            <p className="text-[7px] font-bold text-white/80 tracking-wider truncate">
-              {card.name}
-            </p>
+        {/* 카드사 로고 */}
+        {CARD_LOGOS[card.issuer] ? (
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+            <img src={CARD_LOGOS[card.issuer]} alt={card.issuer} className="h-full w-full object-contain" />
           </div>
-        </div>
+        ) : (
+          <div
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white text-[11px] font-extrabold"
+            style={{ backgroundColor: card.color }}
+          >
+            {card.issuer.slice(0, 2)}
+          </div>
+        )}
 
         <div className="flex-1 min-w-0">
-          <span className="text-[15px] font-bold truncate block">{card.name}</span>
+          <span className="text-[15px] font-extrabold truncate block">{card.name}</span>
           <span className="text-[12px] text-muted-foreground">
             {linkedAccount ? `${linkedAccount.bank}` : ''} · {card.paymentDay}일 결제
           </span>
         </div>
         {showCheck && (
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground/10 animate-in fade-in zoom-in duration-300">
+          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-foreground/10 animate-in fade-in zoom-in duration-300">
             <Check className="h-3.5 w-3.5 text-foreground" />
           </div>
         )}
@@ -109,9 +110,9 @@ export function BillInputCard({
           value={inputValue}
           onChange={handleChange}
           onBlur={handleBlur}
-          className="font-display tabular-nums rounded-xl border-border/40 bg-muted/30 text-base font-semibold"
+          className="font-display tabular-nums border-border/40 bg-muted/30 text-base font-bold"
         />
-        <span className="text-xs font-medium text-muted-foreground shrink-0">원</span>
+        <span className="text-xs font-semibold text-muted-foreground shrink-0">원</span>
       </div>
     </div>
   );

@@ -74,13 +74,13 @@ export function DataManagement() {
 
   return (
     <div className="space-y-2.5">
-      <div className="card-elevated rounded-2xl divide-y divide-border/30">
+      <div className="card-elevated divide-y divide-border/30">
         <button
           onClick={handleExport}
-          className="flex w-full items-center gap-3 p-4 text-left text-sm font-medium transition-colors hover:bg-muted/30 first:rounded-t-2xl"
+          className="flex w-full items-center gap-3 p-4 text-left text-sm font-semibold transition-colors hover:bg-muted/30"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10">
-            <Download className="h-4 w-4 text-foreground" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
+            <Download className="h-4 w-4 text-background" />
           </div>
           <div>
             <p>데이터 내보내기</p>
@@ -90,10 +90,10 @@ export function DataManagement() {
 
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex w-full items-center gap-3 p-4 text-left text-sm font-medium transition-colors hover:bg-muted/30"
+          className="flex w-full items-center gap-3 p-4 text-left text-sm font-semibold transition-colors hover:bg-muted/30"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10">
-            <Upload className="h-4 w-4 text-foreground" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
+            <Upload className="h-4 w-4 text-background" />
           </div>
           <div>
             <p>데이터 가져오기</p>
@@ -110,9 +110,9 @@ export function DataManagement() {
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <button className="flex w-full items-center gap-3 p-4 text-left text-sm font-medium transition-colors hover:bg-muted/30 last:rounded-b-2xl">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10">
-                <RotateCcw className="h-4 w-4 text-foreground" />
+            <button className="flex w-full items-center gap-3 p-4 text-left text-sm font-semibold transition-colors hover:bg-muted/30">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
+                <RotateCcw className="h-4 w-4 text-background" />
               </div>
               <div>
                 <p className="text-foreground">모든 데이터 초기화</p>

@@ -28,7 +28,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className={cn(
-            'flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-bold',
+            'flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-extrabold',
             plan.priority === 1
               ? 'bg-primary text-primary-foreground'
               : 'bg-muted text-muted-foreground',
@@ -36,12 +36,12 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
             {plan.priority}
           </span>
           {plan.status === 'done' && (
-            <span className="flex items-center gap-1 rounded-lg bg-muted px-2 py-0.5 text-[10px] font-semibold text-foreground">
+            <span className="flex items-center gap-1 bg-muted px-2 py-0.5 text-[10px] font-bold text-foreground">
               <Check className="h-3 w-3" /> 완료
             </span>
           )}
           {plan.status === 'skipped' && (
-            <span className="flex items-center gap-1 rounded-lg bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+            <span className="flex items-center gap-1 bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
               <SkipForward className="h-3 w-3" /> 건너뜀
             </span>
           )}
@@ -52,12 +52,12 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
       </div>
 
       <div className="flex items-center gap-2 text-sm">
-        <span className="font-medium truncate">{fromAccount?.name || '알 수 없음'}</span>
+        <span className="font-semibold truncate">{fromAccount?.bank || '알 수 없음'}</span>
         <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-        <span className="font-medium truncate">{toAccount?.name || '알 수 없음'}</span>
+        <span className="font-semibold truncate">{toAccount?.bank || '알 수 없음'}</span>
       </div>
 
-      <p className="mt-1.5 font-display text-xl font-bold tabular-nums tracking-tight">
+      <p className="mt-1.5 font-display text-xl font-extrabold tabular-nums tracking-tight">
         {formatWon(plan.amount)}
       </p>
       <p className="mt-1 text-[11px] text-muted-foreground">{plan.reason}</p>
@@ -67,7 +67,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
           <Button
             size="sm"
             onClick={() => onMarkDone(plan.id)}
-            className="rounded-xl bg-primary text-primary-foreground text-xs h-8 px-4 hover:bg-primary/90"
+            className=" bg-primary text-primary-foreground text-xs h-8 px-4 hover:bg-primary/90"
           >
             완료 처리
           </Button>
@@ -75,7 +75,7 @@ export function TransferPlanItem({ plan, onMarkDone, onSkip }: TransferPlanItemP
             size="sm"
             variant="ghost"
             onClick={() => onSkip(plan.id)}
-            className="rounded-xl text-xs h-8 px-4"
+            className=" text-xs h-8 px-4"
           >
             건너뛰기
           </Button>

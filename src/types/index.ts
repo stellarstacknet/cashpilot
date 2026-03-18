@@ -7,7 +7,6 @@ export type TransferStatus = 'pending' | 'done' | 'skipped';
 // ── 계좌 인터페이스 ──
 export interface Account {
   id: string;
-  name: string;          // 계좌 별칭
   bank: string;          // 은행명
   balance: number;       // 현재 잔액
   purpose: AccountPurpose; // 용도 (급여/카드결제/저축/일반)
@@ -77,4 +76,5 @@ export interface TimelineEvent {
   balanceAfter: number;  // 이벤트 후 잔액
   isShortage: boolean;   // 잔액 부족 여부
   color?: string;        // 표시 색상
+  issuer?: string;       // 카드사명
 }

@@ -30,10 +30,10 @@ export function BillInputList({ year, month }: BillInputListProps) {
   if (cards.length === 0) {
     return (
       <div className="card-elevated py-16 text-center">
-        <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
-          <Receipt className="h-7 w-7 text-primary" />
+        <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-foreground">
+          <Receipt className="h-7 w-7 text-background" />
         </div>
-        <h3 className="font-display text-base font-semibold">카드를 먼저 등록해주세요</h3>
+        <h3 className="font-display text-base font-bold">카드를 먼저 등록해주세요</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           자산 탭에서 카드를 추가하면<br />청구서를 입력할 수 있습니다.
         </p>
@@ -53,18 +53,18 @@ export function BillInputList({ year, month }: BillInputListProps) {
         />
       ))}
 
-      <div className="hero-gradient rounded-2xl p-4 text-white">
+      <div className="hero-gradient rounded-xl p-4 text-white">
         <div className="relative z-10 flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-medium text-white/60/50">총 청구액</p>
-            <p className="font-display text-xl font-bold tabular-nums tracking-tight mt-0.5 text-red-300">
-              -{formatWon(totalBills)}
+            <p className="text-[11px] font-semibold text-white/60">총 청구액</p>
+            <p className="font-display text-xl font-extrabold tabular-nums tracking-tight mt-0.5 text-white">
+              {formatWon(totalBills)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[11px] text-white/60/50">{enteredCount}/{cards.length} 입력</p>
+            <p className="text-[11px] text-white/60">{enteredCount}/{cards.length} 입력</p>
             {allEntered && (
-              <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-white/70/60">
+              <div className="mt-1 flex items-center gap-1 text-[11px] font-bold text-white/70">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 완료
               </div>

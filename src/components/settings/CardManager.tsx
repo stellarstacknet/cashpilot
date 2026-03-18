@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { useCardStore } from '@/stores/useCardStore';
 import { useAccountStore } from '@/stores/useAccountStore';
 import { useBillStore } from '@/stores/useBillStore';
-import { CARD_ISSUERS, CARD_ISSUER_COLORS, CARD_COLORS } from '@/utils/constants';
+import { CARD_ISSUERS, CARD_ISSUER_COLORS, CARD_COLORS, CARD_LOGOS } from '@/utils/constants';
 import { formatWon } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
 
@@ -80,17 +80,17 @@ export function CardManager() {
   // 연결 계좌명 조회
   const getLinkedAccountName = (accountId: string) => {
     const account = accounts.find((a) => a.id === accountId);
-    return account ? `${account.bank} ${account.name}` : '';
+    return account ? account.bank : '';
   };
 
   return (
     <div className="space-y-3">
       {cards.length === 0 && (
-        <div className="card-elevated rounded-2xl py-16 text-center">
-          <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/10">
-            <Plus className="h-7 w-7 text-foreground" />
+        <div className="card-elevated py-16 text-center">
+          <div className="empty-state-icon mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-foreground">
+            <Plus className="h-7 w-7 text-background" />
           </div>
-          <h3 className="font-display text-base font-semibold">카드를 등록해주세요</h3>
+          <h3 className="font-display text-base font-bold">카드를 등록해주세요</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             카드를 추가하면 청구액 관리를 시작할 수 있습니다.
           </p>
@@ -106,7 +106,7 @@ export function CardManager() {
           <div
             key={card.id}
             className={cn(
-              'card-elevated rounded-2xl overflow-hidden transition-opacity',
+              'card-elevated overflow-hidden transition-opacity',
               !card.isActive && 'opacity-40',
             )}
           >
@@ -118,22 +118,21 @@ export function CardManager() {
               <div className="flex items-start justify-between">
                 {/* 카드 이미지 + 정보 */}
                 <div className="flex items-center gap-3.5">
-                  <div
-                    className="relative h-[52px] w-[82px] shrink-0 rounded-xl overflow-hidden"
-                    style={{ backgroundColor: card.color }}
-                  >
-                    {/* 카드 표면 디테일 */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-                    <div className="absolute left-3 top-2.5 h-[10px] w-[14px] rounded-[2px] bg-white/40" />
-                    <div className="absolute bottom-2 left-3 right-3">
-                      <p className="text-[7px] font-bold text-white/80 tracking-wider truncate">
-                        {card.name}
-                      </p>
+                  {CARD_LOGOS[card.issuer] ? (
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+                      <img src={CARD_LOGOS[card.issuer]} alt={card.issuer} className="h-full w-full object-contain" />
                     </div>
-                  </div>
+                  ) : (
+                    <div
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white text-[11px] font-extrabold"
+                      style={{ backgroundColor: card.color }}
+                    >
+                      {card.issuer.slice(0, 2)}
+                    </div>
+                  )}
 
                   <div>
-                    <p className="text-[15px] font-bold">{card.name}</p>
+                    <p className="text-[15px] font-extrabold">{card.name}</p>
                     <p className="text-[12px] text-muted-foreground mt-0.5">
                       {card.issuer}
                     </p>
@@ -156,46 +155,53 @@ export function CardManager() {
                     결제일 {card.paymentDay}일
                   </p>
                 </div>
-                <p className="font-display text-[20px] font-bold tabular-nums tracking-tight mt-1">
+                <p className="font-display text-[20px] font-extrabold tabular-nums tracking-tight mt-1">
                   {formatWon(bill?.amount || 0)}
                 </p>
               </div>
             </div>
 
             {/* 확장 영역: 상세 정보 + 액션 */}
-            {isExpanded && (
-              <div className="border-t border-border/40 bg-muted/30">
-                <div className="px-5 py-3.5 space-y-2.5">
-                  {linkedName && (
-                    <div className="flex justify-between text-[12px]">
-                      <span className="text-muted-foreground">연결 계좌</span>
-                      <span className="font-medium">{linkedName}</span>
-                    </div>
-                  )}
-                </div>
+            <div
+              className={cn(
+                'grid transition-all duration-300 ease-out',
+                isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="border-t border-border/40 bg-muted/30">
+                  <div className="px-5 py-3.5 space-y-2.5">
+                    {linkedName && (
+                      <div className="flex justify-between text-[12px]">
+                        <span className="text-muted-foreground">연결 계좌</span>
+                        <span className="font-semibold">{linkedName}</span>
+                      </div>
+                    )}
+                  </div>
 
-                <div className="flex border-t border-border/40">
-                  <button
-                    onClick={() => toggleActive(card.id)}
-                    className="flex-1 py-3 text-[13px] font-semibold text-center border-r border-border/40 transition-colors hover:bg-muted/50"
-                  >
-                    {card.isActive ? 'OFF' : 'ON'}
-                  </button>
-                  <button
-                    onClick={() => openEdit(card.id)}
-                    className="flex-1 py-3 text-[13px] font-semibold text-center border-r border-border/40 transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
-                  >
-                    <Pencil className="h-3.5 w-3.5" /> 수정
-                  </button>
-                  <button
-                    onClick={() => deleteCard(card.id)}
-                    className="flex-1 py-3 text-[13px] font-semibold text-muted-foreground text-center transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" /> 삭제
-                  </button>
+                  <div className="flex border-t border-border/40">
+                    <button
+                      onClick={() => toggleActive(card.id)}
+                      className="flex-1 py-3 text-[13px] font-bold text-center border-r border-border/40 transition-colors hover:bg-muted/50"
+                    >
+                      {card.isActive ? 'OFF' : 'ON'}
+                    </button>
+                    <button
+                      onClick={() => openEdit(card.id)}
+                      className="flex-1 py-3 text-[13px] font-bold text-center border-r border-border/40 transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                    >
+                      <Pencil className="h-3.5 w-3.5" /> 수정
+                    </button>
+                    <button
+                      onClick={() => deleteCard(card.id)}
+                      className="flex-1 py-3 text-[13px] font-bold text-muted-foreground text-center transition-colors hover:bg-muted/50 flex items-center justify-center gap-1.5"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> 삭제
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         );
       })}
@@ -203,7 +209,7 @@ export function CardManager() {
       {/* 카드 추가 버튼 */}
       <button
         onClick={openAdd}
-        className="flex w-full items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-border/50 py-5 text-[13px] font-semibold text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        className="flex w-full items-center justify-center gap-1.5 border-2 border-dashed border-border/50 py-5 text-[13px] font-bold text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
       >
         <Plus className="h-4 w-4" /> 카드 추가
       </button>
@@ -223,7 +229,7 @@ export function CardManager() {
                   {CARD_ISSUERS.map((issuer) => (
                     <SelectItem key={issuer} value={issuer}>
                       <div className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CARD_ISSUER_COLORS[issuer] || '#6B7280' }} />
+                        <span className="h-2.5 w-2.5" style={{ backgroundColor: CARD_ISSUER_COLORS[issuer] || '#6B7280' }} />
                         {issuer}
                       </div>
                     </SelectItem>
@@ -262,7 +268,7 @@ export function CardManager() {
                 <SelectContent>
                   {accounts.map((account) => (
                     <SelectItem key={account.id} value={account.id}>
-                      {account.bank} - {account.name}
+                      {account.bank}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -277,7 +283,7 @@ export function CardManager() {
                     type="button"
                     onClick={() => setForm({ ...form, color: CARD_ISSUER_COLORS[form.issuer] })}
                     className={cn(
-                      'h-8 w-8 rounded-lg transition-all ring-offset-2 ring-offset-background',
+                      'h-8 w-8 transition-all ring-offset-2 ring-offset-background',
                       form.color === CARD_ISSUER_COLORS[form.issuer] && 'ring-2 ring-foreground scale-110',
                     )}
                     style={{ backgroundColor: CARD_ISSUER_COLORS[form.issuer] }}
@@ -290,7 +296,7 @@ export function CardManager() {
                     type="button"
                     onClick={() => setForm({ ...form, color })}
                     className={cn(
-                      'h-8 w-8 rounded-lg transition-all ring-offset-2 ring-offset-background',
+                      'h-8 w-8 transition-all ring-offset-2 ring-offset-background',
                       form.color === color && 'ring-2 ring-foreground scale-110',
                     )}
                     style={{ backgroundColor: color }}

@@ -23,8 +23,8 @@ export function BillsPage({ monthNav }: BillsPageProps) {
     <div className="space-y-7">
       <div className="flex items-end justify-between">
         <div>
-          <p className="text-[11px] font-bold text-muted-foreground/60 tracking-wider uppercase">BILLS</p>
-          <h1 className="text-[22px] font-extrabold tracking-tight mt-0.5">청구서 입력</h1>
+          <p className="text-[11px] font-extrabold text-muted-foreground/60 tracking-wider uppercase">BILLS</p>
+          <h1 className="text-[22px] font-black tracking-tight mt-0.5">청구서 입력</h1>
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -36,7 +36,7 @@ export function BillsPage({ monthNav }: BillsPageProps) {
           <button
             onClick={goToCurrentMonth}
             className={cn(
-              'px-2.5 py-1 rounded-lg text-[13px] font-bold tabular-nums transition-colors',
+              'px-2.5 py-1 text-[13px] font-extrabold tabular-nums transition-colors',
               isCurrentMonth
                 ? 'text-foreground'
                 : 'text-muted-foreground hover:text-foreground',

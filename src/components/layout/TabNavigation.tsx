@@ -42,7 +42,7 @@ function TabButton({ id, label, icon: Icon, isActive, onClick }: {
       )} />
       <span className={cn(
         'text-[10px] tracking-tight',
-        isActive ? 'text-foreground font-bold' : 'text-muted-foreground font-semibold',
+        isActive ? 'text-foreground font-extrabold' : 'text-muted-foreground font-bold',
       )}>
         {label}
       </span>
@@ -83,7 +83,7 @@ export function TabNavigation({ activeTab, onTabChange }: TabNavigationProps) {
           </button>
           <span className={cn(
             'text-[10px] tracking-tight mt-1 mb-1.5',
-            isDashboardActive ? 'text-foreground font-bold' : 'text-muted-foreground font-semibold',
+            isDashboardActive ? 'text-foreground font-extrabold' : 'text-muted-foreground font-bold',
           )}>
             홈
           </span>

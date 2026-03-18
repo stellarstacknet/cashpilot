@@ -55,18 +55,18 @@ function DonutChart({ ratio, size = 72 }: { ratio: number; size?: number }) {
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
           {ratio > 50 ? (
             <>
-              <stop offset="0%" stopColor="#a5b4fc" />
-              <stop offset="100%" stopColor="#c4b5fd" />
+              <stop offset="0%" stopColor="#3a9bd5" />
+              <stop offset="100%" stopColor="#3a9bd5" />
             </>
           ) : ratio > 20 ? (
             <>
-              <stop offset="0%" stopColor="#fde68a" />
-              <stop offset="100%" stopColor="#fbbf24" />
+              <stop offset="0%" stopColor="#e5a000" />
+              <stop offset="100%" stopColor="#cc8f00" />
             </>
           ) : (
             <>
-              <stop offset="0%" stopColor="#fca5a5" />
-              <stop offset="100%" stopColor="#f87171" />
+              <stop offset="0%" stopColor="#e53535" />
+              <stop offset="100%" stopColor="#e53535" />
             </>
           )}
         </linearGradient>
@@ -76,7 +76,7 @@ function DonutChart({ ratio, size = 72 }: { ratio: number; size?: number }) {
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="hsla(270, 40%, 80%, 0.15)"
+        stroke="hsla(0, 0%, 100%, 0.1)"
         strokeWidth={strokeWidth}
       />
       <circle
@@ -111,16 +111,16 @@ export function SummaryCards({
   return (
     <div className="space-y-3">
       {/* 히어로 카드 — 잔여액이 메인 */}
-      <div className="hero-gradient rounded-[24px] p-6 text-white overflow-hidden">
+      <div className="hero-gradient rounded-xl p-6 text-white overflow-hidden">
         <div className="relative z-10">
           {/* 메인: 잔여액 + 도넛 */}
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-[12px] font-semibold text-white/50/45 tracking-wider uppercase">
+              <p className="text-[12px] font-bold text-white/50 tracking-wider uppercase">
                 결제 후 잔여
               </p>
-              <p className="mt-3 font-display text-[36px] font-extrabold leading-none tracking-tight tabular-nums text-sky-300">
-                {formatCurrency(animatedRemaining)}<span className="text-[20px] font-bold text-sky-300/60 ml-1">원</span>
+              <p className="mt-3 font-display text-[36px] font-black leading-none tracking-tight tabular-nums text-white">
+                {formatCurrency(animatedRemaining)}<span className="text-[20px] font-extrabold text-white/50 ml-1">원</span>
               </p>
             </div>
 
@@ -128,10 +128,10 @@ export function SummaryCards({
             <div className="relative flex items-center justify-center">
               <DonutChart ratio={remainingRatio} />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[16px] font-extrabold tabular-nums">
+                <span className="text-[16px] font-black tabular-nums">
                   {remainingRatio.toFixed(0)}
                 </span>
-                <span className="text-[9px] font-bold text-white/50/45 -mt-0.5">%</span>
+                <span className="text-[9px] font-extrabold text-white/50 -mt-0.5">%</span>
               </div>
             </div>
           </div>
@@ -139,14 +139,14 @@ export function SummaryCards({
           {/* 보조: 총자산 / 청구액 */}
           <div className="mt-6 grid grid-cols-2 gap-4 pt-5 border-t border-white/10">
             <div>
-              <p className="text-[11px] font-semibold text-white/40 tracking-wide">총 자산</p>
-              <p className="font-display text-[18px] font-extrabold tabular-nums tracking-tight mt-1 text-white/70">
+              <p className="text-[11px] font-bold text-white/40 tracking-wide">총 자산</p>
+              <p className="font-display text-[18px] font-black tabular-nums tracking-tight mt-1 text-[#3a9bd5]">
                 {formatCurrency(animatedBalance)}<span className="text-[11px] ml-0.5">원</span>
               </p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-white/40 tracking-wide">청구액</p>
-              <p className="font-display text-[18px] font-extrabold tabular-nums tracking-tight mt-1 text-red-400">
+              <p className="text-[11px] font-bold text-white/40 tracking-wide">청구액</p>
+              <p className="font-display text-[18px] font-black tabular-nums tracking-tight mt-1 text-[#e53535]">
                 -{formatCurrency(animatedBills)}<span className="text-[11px] ml-0.5">원</span>
               </p>
             </div>

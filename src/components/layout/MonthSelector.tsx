@@ -26,19 +26,19 @@ export function MonthSelector({
     <div className="flex items-center justify-between card-elevated px-4 py-3">
       <button
         onClick={onPrev}
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-95"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
 
       <div className="flex items-center gap-2.5">
-        <h2 className="font-display text-[17px] font-extrabold tracking-tight">
+        <h2 className="font-display text-[17px] font-black tracking-tight">
           {formatYearMonth(year, month)}
         </h2>
         {!isCurrentMonth && onToday && (
           <button
             onClick={onToday}
-            className="rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-white transition-all hover:bg-primary/90 active:scale-95"
+            className=" bg-primary px-3 py-1 text-[11px] font-extrabold text-white transition-all hover:bg-primary/90 active:scale-95"
           >
             오늘
           </button>
@@ -48,7 +48,7 @@ export function MonthSelector({
       <button
         onClick={onNext}
         disabled={!canGoNext}
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 active:scale-95"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 active:scale-95"
       >
         <ChevronRight className="h-5 w-5" />
       </button>

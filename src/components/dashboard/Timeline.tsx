@@ -1,17 +1,20 @@
 // 결제 타임라인 컴포넌트
-// 날짜별 그룹핑 + 날짜 헤더 + 이벤트 리스트
+// 날짜별 그룹핑 + 접기/펼치기
 import { useMemo } from 'react';
 import type { TimelineEvent } from '@/types';
 import { formatCurrency } from '@/utils/formatter';
 import { cn } from '@/lib/utils';
+import { CARD_LOGOS } from '@/utils/constants';
+import { ChevronRight } from 'lucide-react';
 
 interface TimelineProps {
   events: TimelineEvent[];
   month: number;
+  expandedDays: Set<number>;
+  onToggleDay: (day: number) => void;
 }
 
-export function Timeline({ events, month }: TimelineProps) {
-  // 날짜별 그룹핑
+export function Timeline({ events, month, expandedDays, onToggleDay }: TimelineProps) {
   const grouped = useMemo(() => {
     const map = new Map<number, TimelineEvent[]>();
     for (const event of events) {
@@ -34,13 +37,17 @@ export function Timeline({ events, month }: TimelineProps) {
     <div className="space-y-3">
       {grouped.map(([day, dayEvents]) => {
         const dayTotal = dayEvents.reduce((sum, e) => sum + e.amount, 0);
+        const isExpanded = expandedDays.has(day);
 
         return (
           <div key={day} className="card-elevated overflow-hidden">
-            {/* 날짜 헤더 */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-border/50">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-[18px] font-extrabold tabular-nums text-foreground">
+            {/* 날짜 헤더 — 클릭으로 접기/펼치기 */}
+            <div
+              className="flex items-center justify-between px-5 py-3 cursor-pointer press-scale"
+              onClick={() => onToggleDay(day)}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-[18px] font-black tabular-nums text-foreground">
                   {month}.{day}
                 </span>
                 {dayEvents[0]?.originalDay && (
@@ -49,52 +56,76 @@ export function Timeline({ events, month }: TimelineProps) {
                   </span>
                 )}
               </div>
-              <span className="text-[13px] font-bold tabular-nums text-muted-foreground">
-                {formatCurrency(dayTotal)}원
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[13px] font-extrabold tabular-nums text-muted-foreground">
+                  {formatCurrency(dayTotal)}원
+                </span>
+                <ChevronRight className={cn(
+                  'h-4 w-4 text-muted-foreground/50 transition-transform duration-200',
+                  isExpanded && 'rotate-90',
+                )} />
+              </div>
             </div>
 
-            {/* 해당 날짜 이벤트 목록 */}
-            {dayEvents.map((event, i) => (
-              <div
-                key={i}
-                className={cn(
-                  'flex items-center gap-3.5 px-5 py-3.5',
-                  i !== dayEvents.length - 1 && 'border-b border-border/30',
-                )}
-              >
-                {/* 카드 색상 dot + 이벤트 정보 */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    {event.color && (
-                      <span
-                        className="inline-block h-2 w-2 shrink-0 rounded-full"
-                        style={{ backgroundColor: event.color }}
-                      />
-                    )}
-                    <span className="truncate text-[14px] font-semibold">{event.label}</span>
-                  </div>
-                  <p className="text-[12px] text-muted-foreground mt-0.5 ml-4">
-                    {event.accountName}
-                  </p>
-                </div>
+            {/* 접히는 이벤트 목록 */}
+            <div
+              className={cn(
+                'grid transition-all duration-300 ease-out',
+                isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="border-t border-border/50">
+                  {dayEvents.map((event, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        'flex items-center gap-3.5 px-5 py-3.5',
+                        i !== dayEvents.length - 1 && 'border-b border-border/30',
+                      )}
+                    >
+                      {event.issuer && CARD_LOGOS[event.issuer] ? (
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+                          <img
+                            src={CARD_LOGOS[event.issuer]}
+                            alt=""
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white text-[9px] font-extrabold"
+                          style={{ backgroundColor: event.color || '#6B7280' }}
+                        >
+                          {event.label.slice(0, 2)}
+                        </div>
+                      )}
 
-                {/* 금액 */}
-                <div className="text-right shrink-0">
-                  <span className={cn(
-                    'text-[15px] font-bold tabular-nums tracking-tight',
-                    event.type === 'income' ? 'text-blue-400' : 'text-foreground',
-                  )}>
-                    {event.type === 'income' && '+'}{formatCurrency(event.amount)}원
-                  </span>
-                  {event.isShortage && (
-                    <p className="text-[11px] font-semibold text-red-400 mt-0.5">
-                      {formatCurrency(Math.abs(event.balanceAfter))}원 부족
-                    </p>
-                  )}
+                      <div className="flex-1 min-w-0">
+                        <span className="truncate text-[14px] font-bold block">{event.label}</span>
+                        <p className="text-[12px] text-muted-foreground mt-0.5">
+                          {event.accountName}
+                        </p>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <span className={cn(
+                          'text-[15px] font-extrabold tabular-nums tracking-tight',
+                          event.type === 'income' ? 'text-[#3a9bd5]' : 'text-foreground',
+                        )}>
+                          {event.type === 'income' && '+'}{formatCurrency(event.amount)}원
+                        </span>
+                        {event.isShortage && (
+                          <p className="text-[11px] font-bold text-[#e53535] mt-0.5">
+                            {formatCurrency(Math.abs(event.balanceAfter))}원 부족
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         );
       })}

@@ -25,7 +25,6 @@ export async function pullFromSupabase() {
   if (accountsRes.data) {
     const accounts: Account[] = accountsRes.data.map((a) => ({
       id: a.id,
-      name: a.name,
       bank: a.bank,
       balance: Number(a.balance),
       purpose: a.purpose,
@@ -84,7 +83,6 @@ export async function pushToSupabase() {
     await supabase.from('accounts').upsert({
       id: a.id,
       user_id: user.id,
-      name: a.name,
       bank: a.bank,
       balance: a.balance,
       purpose: a.purpose,

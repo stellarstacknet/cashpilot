@@ -70,7 +70,7 @@ export function calculateTransferPlan(
     } else {
       deficitList.push(info);
       warnings.push(
-        `${account.name}: ${Math.abs(gap).toLocaleString()}원 부족`,
+        `${account.bank}: ${Math.abs(gap).toLocaleString()}원 부족`,
       );
     }
   }
@@ -115,7 +115,7 @@ export function calculateTransferPlan(
         amount: transferAmount,
         dueDate: dueDay,
         priority,
-        reason: `${cardNames} 결제 (${dueDay}일) - ${fromAccount?.name} → ${toAccount?.name}`,
+        reason: `${cardNames} 결제 (${dueDay}일) - ${fromAccount?.bank} → ${toAccount?.bank}`,
         status: 'pending',
       });
 
@@ -198,11 +198,12 @@ export function generateTimelineEvents(
       type: 'bill',
       label: card.name,
       amount: bill.amount,
-      accountName: account.name,
+      accountName: account.bank,
       accountId: card.linkedAccountId,
       balanceAfter,
       isShortage: balanceAfter < 0,
       color: card.color,
+      issuer: card.issuer,
     });
   }
 
