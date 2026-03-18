@@ -1,9 +1,8 @@
-import { Download, LogOut, RefreshCw, Check, Bell, BellOff, Stethoscope } from 'lucide-react';
+import { Download, LogOut, RefreshCw, Check, Bell, BellOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataManagement } from '@/components/settings/DataManagement';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { loadFromSupabase } from '@/lib/sync';
-import { supabase } from '@/lib/supabase';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { getNotificationStatus, requestNotificationPermission } from '@/utils/notifications';
 import { useState, useCallback } from 'react';
@@ -32,87 +31,6 @@ export function SettingsPage() {
     } finally {
       setSyncing(false);
     }
-  };
-
-  const [diagResult, setDiagResult] = useState<string[] | null>(null);
-  const [diagRunning, setDiagRunning] = useState(false);
-
-  const runDiagnostics = async () => {
-    setDiagRunning(true);
-    const logs: string[] = [];
-
-    // 1. 온라인 체크
-    logs.push(`1. 온라인: ${navigator.onLine ? 'YES' : 'NO'}`);
-
-    // 2. Supabase 세션 체크
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      logs.push(`2. 세션: ${session ? `YES (${session.user.email})` : 'NO - 세션 없음'}`);
-    } catch (e) {
-      logs.push(`2. 세션: ERROR - ${e instanceof Error ? e.message : String(e)}`);
-    }
-
-    // 3. getUser 체크
-    try {
-      const { data: { user: authUser }, error } = await supabase.auth.getUser();
-      if (error) logs.push(`3. getUser: ERROR - ${error.message}`);
-      else logs.push(`3. getUser: ${authUser ? `YES (${authUser.id.slice(0, 8)}...)` : 'NO - null'}`);
-    } catch (e) {
-      logs.push(`3. getUser: EXCEPTION - ${e instanceof Error ? e.message : String(e)}`);
-    }
-
-    // 4. DB 읽기 테스트
-    try {
-      const { data, error } = await supabase.from('accounts').select('*', { count: 'exact' });
-      if (error) logs.push(`4. DB 읽기: ERROR - ${error.message}`);
-      else logs.push(`4. DB 읽기: ${data?.length ?? 0}건 (accounts)`);
-    } catch (e) {
-      logs.push(`4. DB 읽기: EXCEPTION - ${e instanceof Error ? e.message : String(e)}`);
-    }
-
-    // 5. DB 쓰기 테스트 (test row upsert + 삭제)
-    try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const testId = '00000000-0000-0000-0000-000000000000';
-        const { error: writeErr } = await supabase.from('accounts').upsert({
-          id: testId,
-          user_id: authUser.id,
-          name: '__test__',
-          bank: '__test__',
-          balance: 0,
-          purpose: 'general',
-          sort_order: 999,
-        }, { onConflict: 'id' });
-        if (writeErr) {
-          logs.push(`5. DB 쓰기: ERROR - ${writeErr.message} | ${writeErr.details || ''} | ${writeErr.hint || ''}`);
-        } else {
-          logs.push(`5. DB 쓰기: YES`);
-          await supabase.from('accounts').delete().eq('id', testId);
-          logs.push(`6. DB 삭제: YES`);
-        }
-      } else {
-        logs.push(`5. DB 쓰기: SKIP - 인증 없음`);
-      }
-    } catch (e) {
-      logs.push(`5. DB 쓰기: EXCEPTION - ${e instanceof Error ? e.message : String(e)}`);
-    }
-
-    // 6. 각 테이블 행 수
-    try {
-      const [cards, bills, fixed] = await Promise.all([
-        supabase.from('cards').select('id', { count: 'exact' }),
-        supabase.from('bills').select('id', { count: 'exact' }),
-        supabase.from('fixed_expenses').select('id', { count: 'exact' }),
-      ]);
-      logs.push(`7. cards: ${cards.data?.length ?? 0}건, bills: ${bills.data?.length ?? 0}건, fixed: ${fixed.data?.length ?? 0}건`);
-    } catch (e) {
-      logs.push(`7. 테이블 조회: ERROR`);
-    }
-
-    logs.push(`8. 현재 URL: ${window.location.origin}`);
-    setDiagResult(logs);
-    setDiagRunning(false);
   };
 
   const handleEnableNotifications = useCallback(async () => {
@@ -226,35 +144,6 @@ export function SettingsPage() {
             </span>
           ) : null}
         </div>
-      </div>
-
-      {/* 시스템 진단 */}
-      <div className="card-elevated p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[15px] font-extrabold">시스템 진단</p>
-            <p className="text-[12px] text-muted-foreground mt-0.5">Supabase 연결 상태 확인</p>
-          </div>
-          <Button
-            size="sm"
-            onClick={runDiagnostics}
-            disabled={diagRunning}
-            className="bg-primary text-primary-foreground text-[13px] h-9"
-          >
-            <Stethoscope className="mr-1.5 h-3.5 w-3.5" />
-            {diagRunning ? '진단 중...' : '진단'}
-          </Button>
-        </div>
-        {diagResult && (
-          <div className="mt-3 rounded-lg bg-muted/50 p-3 text-[11px] font-mono leading-relaxed space-y-0.5">
-            {diagResult.map((line, i) => (
-              <p key={i} className={cn(
-                line.includes('ERROR') || line.includes('NO') ? 'text-[#e53535]' :
-                line.includes('YES') ? 'text-[#10B981]' : 'text-muted-foreground',
-              )}>{line}</p>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* 데이터 관리 */}
