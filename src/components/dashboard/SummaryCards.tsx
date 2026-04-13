@@ -2,6 +2,7 @@
 // 히어로: 잔여액 메인 + 도넛 차트 + 총자산/청구액 보조
 import { useEffect, useRef, useState } from 'react';
 import { formatCurrency } from '@/utils/formatter';
+import { cn } from '@/lib/utils';
 
 interface SummaryCardsProps {
   totalBalance: number;
@@ -117,10 +118,13 @@ export function SummaryCards({
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <p className="text-[12px] font-bold text-white/50 tracking-wider uppercase">
-                결제 후 잔여
+                {remaining < 0 ? '결제 후 부족' : '결제 후 잔여'}
               </p>
-              <p className="mt-3 font-display text-[36px] font-black leading-none tracking-tight tabular-nums text-[#ffffff]">
-                {formatCurrency(animatedRemaining)}<span className="text-[20px] font-extrabold text-white/60 ml-1">원</span>
+              <p className={cn(
+                'mt-3 font-display text-[36px] font-black leading-none tracking-tight tabular-nums',
+                remaining < 0 ? 'text-[#e53535]' : 'text-[#ffffff]',
+              )}>
+                {remaining < 0 && '-'}{formatCurrency(animatedRemaining)}<span className="text-[20px] font-extrabold text-white/60 ml-1">원</span>
               </p>
             </div>
 
