@@ -45,7 +45,7 @@ export interface MonthlyBill {
 
 // ── 고정비용 인터페이스 ──
 export type FixedExpensePayMethod = 'card' | 'account';
-export type FixedExpenseCategory = 'rental' | 'subscription' | 'telecom' | 'utility' | 'insurance';
+export type FixedExpenseCategory = 'rental' | 'subscription' | 'telecom' | 'utility' | 'insurance' | 'loan';
 
 export interface FixedExpense {
   id: string;
