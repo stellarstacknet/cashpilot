@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useCurrencyInput } from '@/hooks/useCurrencyInput';
-import { Plus, Pencil, Trash2, ChevronRight, Tv, Phone, Droplets, Package, Shield } from 'lucide-react';
+import { Plus, Pencil, Trash2, ChevronRight, Tv, Phone, Droplets, Package, Shield, Landmark } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +36,7 @@ const CATEGORY_LABELS: Record<FixedExpenseCategory, string> = {
   utility: '공과금',
   rental: '렌탈',
   insurance: '보험',
+  loan: '대출이자',
 };
 
 const CATEGORY_ICONS: Record<FixedExpenseCategory, React.ComponentType<{ className?: string }>> = {
@@ -44,6 +45,7 @@ const CATEGORY_ICONS: Record<FixedExpenseCategory, React.ComponentType<{ classNa
   utility: Droplets,
   rental: Package,
   insurance: Shield,
+  loan: Landmark,
 };
 
 const CATEGORY_COLORS: Record<FixedExpenseCategory, string> = {
@@ -52,6 +54,7 @@ const CATEGORY_COLORS: Record<FixedExpenseCategory, string> = {
   utility: '#F59E0B',
   rental: '#8B5CF6',
   insurance: '#EC4899',
+  loan: '#EF4444',
 };
 
 export function FixedExpensePage() {
@@ -100,7 +103,7 @@ export function FixedExpensePage() {
   }, [expenses, totalMonthly]);
 
   const groupedByCategory = useMemo(() => {
-    const order: FixedExpenseCategory[] = ['subscription', 'telecom', 'utility', 'rental', 'insurance'];
+    const order: FixedExpenseCategory[] = ['subscription', 'telecom', 'utility', 'rental', 'insurance', 'loan'];
     const map = new Map<FixedExpenseCategory, typeof expenses>();
     for (const e of expenses) {
       const list = map.get(e.category) || [];
